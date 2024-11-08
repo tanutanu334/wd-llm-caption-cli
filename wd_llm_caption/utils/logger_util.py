@@ -1,4 +1,5 @@
 import logging
+import time
 from logging import handlers
 from typing import Optional
 
@@ -18,6 +19,21 @@ def print_title():
     print(title_format(content=" GitHub: https://github.com/fireicewolf/wd-llm-caption-cli ", symbol="*", length=70))
     print(title_format(content="*", symbol="*", length=70))
     print("")
+
+
+def calculate_time(start_time: float) -> str:
+    total_time = time.monotonic() - start_time
+    days = total_time // (24 * 3600)
+    total_time %= (24 * 3600)
+    hours = total_time // 3600
+    total_time %= 3600
+    minutes = total_time // 60
+    seconds = total_time % 60
+    days = f"{days:.0f} Day(s) " if days > 0 else ""
+    hours = f"{hours:.0f} Hour(s) " if hours > 0 or (days and hours == 0) else ""
+    minutes = f"{minutes:.0f} Min(s) " if minutes > 0 or (hours and minutes == 0) else ""
+    seconds = f"{seconds:.2f} Sec(s)"
+    return f"{days}{hours}{minutes}{seconds}"
 
 
 class Logger:

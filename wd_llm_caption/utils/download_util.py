@@ -7,7 +7,7 @@ from typing import Union, Optional
 import requests
 from tqdm import tqdm
 
-from .logger import Logger
+from .logger_util import Logger
 
 
 def url_download(
@@ -103,12 +103,6 @@ def download_models(
     model_name, model_info = read_json(config_file)
     models_save_path = Path(os.path.join(models_save_path, model_name))
 
-    if args.use_sdk_cache:
-        logger.warning('use_sdk_cache ENABLED! download_method force to use "SDK" and models_save_path will be ignored')
-        args.download_method = 'sdk'
-    else:
-        logger.info(f'Models will be stored in {str(models_save_path)}.')
-
     if args.llm_model_name in ["Joy-Caption-Alpha-One", "Joy-Caption-Alpha-Two"]:
         logger.warning(f"{args.llm_model_name} will force using llm patch, auto changed `llm_patch` to `True`!")
         args.llm_patch = True
@@ -126,6 +120,13 @@ def download_models(
         if model_site not in ["huggingface", "modelscope"]:
             logger.error('Invalid model site!')
             raise ValueError
+        if not skip_local_file_exist:
+            if args.use_sdk_cache:
+                logger.warning('use_sdk_cache ENABLED! download_method force to use "SDK" '
+                               'and models_save_path will be ignored')
+                args.download_method = 'sdk'
+            else:
+                logger.info(f'Models will be stored in {str(models_save_path)} ...')
 
         model_site_info = model_info[model_site]
         try:

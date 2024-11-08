@@ -9,7 +9,7 @@ import cv2
 import numpy
 from PIL import Image
 
-from .logger import Logger
+from .logger_util import Logger
 
 SUPPORT_IMAGE_FORMATS = ("bmp", "jpg", "jpeg", "png", "webp")
 

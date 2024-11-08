@@ -7,8 +7,8 @@ import gradio as gr
 from PIL import Image
 
 from . import caption
-from .utils import inference
-from .utils.logger import print_title
+from .inference import DEFAULT_USER_PROMPT_WITH_WD, DEFAULT_USER_PROMPT_WITHOUT_WD
+from .utils.logger_util import print_title
 
 WD_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_wd.json")
 JOY_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_joy.json")
@@ -327,12 +327,12 @@ def gui():
         def llm_user_prompt_default(caption_method_radio,
                                     llm_read_wd_caption_select,
                                     llm_user_prompt_textbox):
-            if caption_method_radio != "WD+LLM" and llm_user_prompt_textbox == inference.DEFAULT_USER_PROMPT_WITH_WD:
-                llm_user_prompt_change = gr.update(value=inference.DEFAULT_USER_PROMPT_WITHOUT_WD)
-            elif caption_method_radio == "WD+LLM" and llm_user_prompt_textbox == inference.DEFAULT_USER_PROMPT_WITHOUT_WD:
-                llm_user_prompt_change = gr.update(value=inference.DEFAULT_USER_PROMPT_WITH_WD)
+            if caption_method_radio != "WD+LLM" and llm_user_prompt_textbox == DEFAULT_USER_PROMPT_WITH_WD:
+                llm_user_prompt_change = gr.update(value=DEFAULT_USER_PROMPT_WITHOUT_WD)
+            elif caption_method_radio == "WD+LLM" and llm_user_prompt_textbox == DEFAULT_USER_PROMPT_WITHOUT_WD:
+                llm_user_prompt_change = gr.update(value=DEFAULT_USER_PROMPT_WITH_WD)
             elif caption_method_radio == "LLM" and llm_read_wd_caption_select:
-                llm_user_prompt_change = gr.update(value=inference.DEFAULT_USER_PROMPT_WITHOUT_WD)
+                llm_user_prompt_change = gr.update(value=DEFAULT_USER_PROMPT_WITHOUT_WD)
             else:
                 llm_user_prompt_change = gr.update(value=llm_user_prompt_textbox)
             return llm_user_prompt_change

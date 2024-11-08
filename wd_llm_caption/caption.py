@@ -7,11 +7,17 @@ from pathlib import Path
 from PIL import Image
 from tqdm import tqdm
 
-from .utils.download import download_models
-from .utils.image import get_image_paths
-from .utils.inference import DEFAULT_SYSTEM_PROMPT, DEFAULT_USER_PROMPT_WITHOUT_WD, DEFAULT_USER_PROMPT_WITH_WD
-from .utils.inference import get_caption_file_path, LLM, Tagger
-from .utils.logger import Logger, print_title
+from .inference import (DEFAULT_SYSTEM_PROMPT, DEFAULT_USER_PROMPT_WITHOUT_WD, DEFAULT_USER_PROMPT_WITH_WD,
+                        get_caption_file_path)
+from .inference.florence_caption import Florence2
+from .inference.joy_caption import Joy
+from .inference.llama_caption import Llama
+from .inference.minicpm_caption import Minicpm2
+from .inference.qwen_caption import Qwen2
+from .inference.wd_tagger import Tagger
+from .utils.download_util import download_models
+from .utils.image_process_util import get_image_paths
+from .utils.logger_util import Logger, print_title, calculate_time
 
 DEFAULT_MODELS_SAVE_PATH = str(os.path.join(os.getcwd(), "models"))
 
@@ -207,45 +213,40 @@ class Caption:
 
         if self.use_joy:
             # Load Joy models
-            self.my_llm = LLM(
+            self.my_llm = Joy(
                 logger=self.my_logger,
-                models_type="joy",
                 models_paths=self.llm_models_paths,
                 args=args,
             )
             self.my_llm.load_model()
         elif self.use_llama:
             # Load Llama models
-            self.my_llm = LLM(
+            self.my_llm = Llama(
                 logger=self.my_logger,
-                models_type="llama",
                 models_paths=self.llm_models_paths,
                 args=args,
             )
             self.my_llm.load_model()
         elif self.use_qwen:
             # Load Qwen models
-            self.my_llm = LLM(
+            self.my_llm = Qwen2(
                 logger=self.my_logger,
-                models_type="qwen",
                 models_paths=self.llm_models_paths,
                 args=args,
             )
             self.my_llm.load_model()
         elif self.use_minicpm:
             # Load Qwen models
-            self.my_llm = LLM(
+            self.my_llm = Minicpm2(
                 logger=self.my_logger,
-                models_type="minicpm",
                 models_paths=self.llm_models_paths,
                 args=args,
             )
             self.my_llm.load_model()
         elif self.use_florence:
             # Load Florence models
-            self.my_llm = LLM(
+            self.my_llm = Florence2(
                 logger=self.my_logger,
-                models_type="florence",
                 models_paths=self.llm_models_paths,
                 args=args,
             )
@@ -418,18 +419,8 @@ class Caption:
             elif self.use_joy or self.use_llama or self.use_qwen or self.use_minicpm or self.use_florence:
                 self.my_llm.inference()
 
-        total_inference_time = time.monotonic() - start_inference_time
-        days = total_inference_time // (24 * 3600)
-        total_inference_time %= (24 * 3600)
-        hours = total_inference_time // 3600
-        total_inference_time %= 3600
-        minutes = total_inference_time // 60
-        seconds = total_inference_time % 60
-        days = f"{days:.0f} Day(s) " if days > 0 else ""
-        hours = f"{hours:.0f} Hour(s) " if hours > 0 or (days and hours == 0) else ""
-        minutes = f"{minutes:.0f} Min(s) " if minutes > 0 or (hours and minutes == 0) else ""
-        seconds = f"{seconds:.2f} Sec(s)"
-        self.my_logger.info(f"All work done with in {days}{hours}{minutes}{seconds}.")
+        total_inference_time = calculate_time(start_inference_time)
+        self.my_logger.info(f"All work done with in {total_inference_time}.")
 
     def unload_models(
             self

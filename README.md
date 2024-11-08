@@ -242,7 +242,7 @@ pip install -U -r requirements_onnx_cu118.txt
 # For CUDA 12.X
 pip install -U -r requirements_onnx_cu12x.txt
 
-# For Joy Caption or Llama 3.2 Vision Instruct or Qwen2 VL Instruct
+# For LLM Support
 pip install -U -r requirements_llm.txt
 
 # If you want to download or cache model via huggingface hub, install this.
@@ -261,21 +261,31 @@ pip install -U -r requirements_gui.txt
 python gui.py
 ```
 
-### GUI options
+### <span id="GUI options">GUI options</span>
 
-`--theme`
-set gradio theme [`base`, `ocean`, `origin`], default is `base`.
+<details>
+    <summary>GUI options</summary>
+
+`--theme`  
+set gradio theme [`base`, `ocean`, `origin`], default is `base`.  
+
 `--port`  
 gradio webui port, default is `8282`  
+
 `--listen`  
 allow gradio remote connections  
+
 `--share`  
 allow gradio share  
-`--inbrowser`
+
+`--inbrowser`  
 auto open in browser  
+
 `--log_level`  
 set log level [`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`],  
 default is `INFO`
+
+</details>
 
 ## CLI Simple Usage
 
@@ -317,220 +327,172 @@ __Make sure your python venv has been activated first!__
 python caption.py --data_path your_datasets_path
 ```
 
-To run with more options, You can find help by run with this or see at [Options](#options)
+To run with more options, You can find help by run with this or see at [CLI options](#CLI options)
 
 ```shell
 python caption.py -h
 ```
 
-### <span id="options">Options</span>
+### <span id="CLI options">CLI options</span>
 
 <details>
-    <summary>Advance options</summary>
+    <summary>CLI options</summary>
 
-`--data_path`
-
+`--data_path`  
 path where your datasets place
 
-`--recursive`
-
+`--recursive`  
 Will include all support images format in your input datasets path and its sub-path.
 
-`--log_level`
-
+`--log_level`  
 set log level[`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`], default is `INFO`
 
-`--save_logs`
+`--save_logs`  
+save log file.  
+logs will be saved at same level path with `data_path`.  
+e.g., Your input `data_path` is `/home/mydatasets`, your logs will be saved in `/home/`,  
+named as `mydatasets_xxxxxxxxx.log`(x means log created date.),
 
-save log file.
-logs will be saved at same level path with `data_path`.
-e.g., Your input `data_path` is `/home/mydatasets`, your logs will be saved in `/home/`,named as
-`mydatasets_xxxxxxxxx.log`(x means log created date.),
-
-`--model_site`
-
+`--model_site`  
 download model from model site huggingface or modelscope, default is "huggingface".
 
-`--models_save_path`
-
+`--models_save_path`  
 path to save models, default is `models`(Under wd-joy-caption-cli)
 
-`--use_sdk_cache`
-
+`--use_sdk_cache`  
 use sdk\'s cache dir to store models. if this option enabled, `--models_save_path` will be ignored.
 
-`--download_method`
-
+`--download_method`  
 download models via SDK or URL, default is `SDK`(If download via SDK failed, will auto retry with URL).
 
-`--force_download`
-
+`--force_download`  
 force download even file exists.
 
-`--skip_download`
-
+`--skip_download`  
 skip download if file exists.
 
-`--caption_method`
-
-method for caption [`wd`, `llm`, `wd+llm`],  
+`--caption_method`  
+method for caption [`wd`, `llm`, `wd+llm`],    
 select wd or llm models, or both of them to caption, default is `wd+llm`.
 
-`--run_method`
+`--run_method`  
+running method for wd+joy caption[`sync`, `queue`], need `caption_method` set to `both`.  
+if `sync`, image will caption with wd models,  
+then caption with joy models while wd captions in joy user prompt.  
+if `queue`, all images will caption with wd models first,  
+then caption all of them with joy models while wd captions in joy user prompt.  
+default is `sync`.  
 
-running method for wd+joy caption[`sync`, `queue`], need `caption_method` set to `both`.
-if `sync`, image will caption with wd models,
-then caption with joy models while wd captions in joy user prompt.
-if `queue`, all images will caption with wd models first,
-then caption all of them with joy models while wd captions in joy user prompt.
-default is `sync`.
+`--caption_extension`  
+extension of caption file, default is `.txt`.  
+If `caption_method` not `wd+llm`, it will be wd or llm caption file extension.  
 
-`--caption_extension`
-
-extension of caption file, default is `.txt`.
-If `caption_method` not `wd+llm`, it will be wd or llm caption file extension.
-
-`--save_caption_together`
-
+`--save_caption_together`  
 Save WD tags and LLM captions in one file.
 
-`--save_caption_together_seperator`
-
+`--save_caption_together_seperator`  
 Seperator between WD and LLM captions, if they are saved in one file.
 
-`--image_size`
-
+`--image_size`  
 resize image to suitable, default is `1024`.
 
-`--not_overwrite`
-
+`--not_overwrite`  
 not overwrite caption file if exists.
 
-`--custom_caption_save_path`
-
+`--custom_caption_save_path`  
 custom caption file save path.
 
-`--wd_config`
-
+`--wd_config`  
 configs json for wd tagger models, default is `default_wd.json`
 
-`--wd_model_name`
-
+`--wd_model_name`  
 wd tagger model name will be used for caption inference, default is `wd-swinv2-v3`.
 
-`--wd_force_use_cpu`
-
+`--wd_force_use_cpu`  
 force use cpu for wd models inference.
 
-`--wd_caption_extension`
-
+`--wd_caption_extension`  
 extension for wd captions files while `caption_method` is `both`, default is `.wdcaption`.
 
-`--wd_remove_underscore`
-
-replace underscores with spaces in the output tags.
+`--wd_remove_underscore`  
+replace underscores with spaces in the output tags.  
 e.g., `hold_in_hands` will be `hold in hands`.
 
-`--wd_undesired_tags`
-
+`--wd_undesired_tags`  
 comma-separated list of undesired tags to remove from the wd captions.
 
-`--wd_tags_frequency`
-
+`--wd_tags_frequency`  
 Show frequency of tags for images.
 
-`--wd_threshold`
-
+`--wd_threshold`  
 threshold of confidence to add a tag, default value is `0.35`.
 
-`--wd_general_threshold`
-
+`--wd_general_threshold`  
 threshold of confidence to add a tag from general category, same as `--threshold` if omitted.
 
-`--wd_character_threshold`
-
+`--wd_character_threshold`  
 threshold of confidence to add a tag for character category, same as `--threshold` if omitted.
 
-`--wd_add_rating_tags_to_first`
-
+`--wd_add_rating_tags_to_first`  
 Adds rating tags to the first.
 
-`--wd_add_rating_tags_to_last`
-
+`--wd_add_rating_tags_to_last`  
 Adds rating tags to the last.
 
-`--wd_character_tags_first`
-
+`--wd_character_tags_first`  
 Always put character tags before the general tags.
 
-`--wd_always_first_tags`
-
+`--wd_always_first_tags`  
 comma-separated list of tags to always put at the beginning, e.g. `1girl,solo`
 
-`--wd_caption_separator`
-
+`--wd_caption_separator`  
 Separator for captions(include space if needed), default is `, `.
 
-`--wd_tag_replacement`
-
-tag replacement in the format of `source1,target1;source2,target2; ...`.
+`--wd_tag_replacement`  
+tag replacement in the format of `source1,target1;source2,target2; ...`.  
 Escape `,` and `;` with `\\`. e.g. `tag1,tag2;tag3,tag4
 
-`--wd_character_tag_expand`
-
-expand tag tail parenthesis to another tag for character tags.
+`--wd_character_tag_expand`  
+expand tag tail parenthesis to another tag for character tags.  
 e.g., `character_name_(series)` will be expanded to `character_name, series`.
 
-`--llm_choice`
-
+`--llm_choice`  
 select llm models[`joy`, `llama`, `qwen`, `minicpm`, `florence`], default is `llama`.
 
 `--llm_config`
-
 config json for Joy Caption models, default is `default_llama_3.2V.json`
 
-`--llm_model_name`
-
+`--llm_model_name`  
 model name for inference, default is `Llama-3.2-11B-Vision-Instruct`
 
-`--llm_patch`
-
+`--llm_patch`  
 patch llm with lora for uncensored, only support `Llama-3.2-11B-Vision-Instruct` now
 
-`--llm_use_cpu`
-
+`--llm_use_cpu`  
 load joy models use cpu.
 
-`--llm_llm_dtype`
-
+`--llm_llm_dtype`  
 choice joy llm load dtype[`fp16`, `bf16", `fp32`], default is `fp16`.
 
-`--llm_llm_qnt`
-
+`--llm_llm_qnt`  
 Enable quantization for joy llm [`none`,`4bit`, `8bit`]. default is `none`.
 
-`--llm_caption_extension`
-
+`--llm_caption_extension`  
 extension of caption file, default is `.llmcaption`
 
-`--llm_read_wd_caption`
-
+`--llm_read_wd_caption`  
 llm will read wd caption for inference. Only effect when `caption_method` is `llm`
 
-`--llm_caption_without_wd`
-
+`--llm_caption_without_wd`  
 llm will not read wd caption for inference.Only effect when `caption_method` is `wd+llm`
 
-`--llm_user_prompt`
-
+`--llm_user_prompt`  
 user prompt for caption.
 
-`--llm_temperature`
-
+`--llm_temperature`  
 temperature for LLM model, default is `0`，means use llm own default value.
 
-`--llm_max_tokens`
-
+`--llm_max_tokens`  
 max tokens for LLM model output, default is `0`, means use llm own default value.
 
 </details>
