@@ -104,8 +104,9 @@ class Minicpm2:
             image = image_process(image, target_size=int(self.args.image_size))
             self.logger.debug(f"Resized image shape: {image.shape}")
             image = image_process_image(image)
-
-            self.logger.debug(f'Using system prompt:{system_prompt}')
+            if system_prompt:
+                self.logger.warning(f"`{self.args.llm_model_name}` doesn't support system prompt, "
+                                    f"adding system prompt into user prompt...")
             self.logger.debug(f'Using user prompt:{user_prompt}')
             messages = [{'role': 'user', 'content': [image, f'{user_prompt}']}]
             if temperature == 0 and max_new_tokens == 0:

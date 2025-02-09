@@ -1,5 +1,7 @@
 accelerate>=1.3.0
+attrdict
 bitsandbytes>=0.42.0
+einops
 sentencepiece>=0.2.0
 torch>=2.2.2
 transformers>=4.48.3

@@ -4,7 +4,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from . import llm_inference
+from . import llm_inference, get_llm_dtype
 from ..utils.image_process_util import image_process, image_process_image
 from ..utils.logger_util import Logger
 
@@ -53,9 +53,7 @@ class Florence2:
             f'Loading LLM `{self.args.llm_model_name}` with {"CPU" if self.args.llm_use_cpu else "GPU"}...')
         start_time = time.monotonic()
         # LLM dType
-        llm_dtype = torch.float32 if self.args.llm_use_cpu or self.args.llm_dtype == "fp32" else \
-            torch.bfloat16 if self.args.llm_dtype == "bf16" else \
-                torch.float16 if self.args.llm_dtype == "fp16" else torch.float32
+        llm_dtype = get_llm_dtype(logger=self.logger, args=self.args)
         self.logger.info(f'LLM dtype: {llm_dtype}')
         self.llm = AutoModelForCausalLM.from_pretrained(self.llm_path,  # Load `florence` model
                                                         device_map="cuda" if not self.args.llm_use_cpu else "cpu",
@@ -93,9 +91,9 @@ class Florence2:
             image = image_process_image(image)
 
             if system_prompt or user_prompt:
-                self.logger.warning(f"Florence models don't support system prompt or user prompt!")
+                self.logger.warning(f"`{self.args.llm_model_name}` doesn't support system prompt or user prompt!")
             if temperature != 0 or max_new_tokens != 0:
-                self.logger.warning(f"Florence models don't support temperature or max tokens!")
+                self.logger.warning(f"`{self.args.llm_model_name}` doesn't support temperature or max tokens!")
 
             def run_inference(task_prompt, image, text_input=None):
                 if text_input is None:

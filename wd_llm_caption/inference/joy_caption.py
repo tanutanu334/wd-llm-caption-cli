@@ -6,7 +6,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from . import llm_inference
+from . import llm_inference, get_llm_dtype
 from ..utils.image_process_util import image_process, image_process_image
 from ..utils.logger_util import Logger
 
@@ -98,9 +98,7 @@ class Joy:
                 isinstance(self.llm_tokenizer, PreTrainedTokenizerFast)), \
             f"Tokenizer is of type {type(self.llm_tokenizer)}"
         # LLM dType
-        llm_dtype = torch.float32 if self.args.llm_use_cpu or self.args.llm_dtype == "fp32" else \
-            torch.bfloat16 if self.args.llm_dtype == "bf16" else \
-                torch.float16 if self.args.llm_dtype == "fp16" else torch.float32
+        llm_dtype = get_llm_dtype(logger=self.logger, args=self.args)
         self.logger.info(f'LLM dtype: {llm_dtype}')
         # LLM BNB quantization config
         if self.args.llm_qnt == "4bit":
@@ -292,8 +290,10 @@ class Joy:
 
             if self.args.llm_model_name == "Joy-Caption-Pre-Alpha":
                 # Tokenize the prompt
-                self.logger.debug(f"{self.args.llm_model_name} NOT SUPPORT SYSTEM PROMPT!!!")
+                self.logger.warning(f"{self.args.llm_model_name} doesn't support system prompt, "
+                                    f"adding system prompt into user prompt...")
                 self.logger.debug(f'Using user prompt:{user_prompt}')
+                user_prompt = system_prompt+"\n"+user_prompt
                 prompt = self.llm_tokenizer.encode(user_prompt,
                                                    return_tensors='pt',
                                                    padding=False,

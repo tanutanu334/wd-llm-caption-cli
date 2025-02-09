@@ -88,11 +88,11 @@ def download_models(
             if models_type == "wd":
                 model_name = list(datas.keys())[0] if not args.wd_model_name else args.wd_model_name
                 args.wd_model_name = model_name
-            elif models_type in ["joy", "llama", "qwen", "minicpm", "florence"]:
+            elif models_type in ["joy", "llama", "qwen", "minicpm", "janus", "florence"]:
                 model_name = list(datas.keys())[0] if not args.llm_model_name else args.llm_model_name
                 args.llm_model_name = model_name
             else:
-                logger.error("Invalid model type!")
+                logger.error(f"Invalid model type: `{models_type}`!")
                 raise ValueError
 
             if model_name not in datas.keys():
@@ -259,5 +259,5 @@ def download_models(
         else:
             return llm_path,
 
-    elif models_type in ["qwen", "minicpm", "florence"]:
+    elif models_type in ["qwen", "minicpm", "janus", "florence"]:
         return Path(os.path.dirname(models_path[0])),

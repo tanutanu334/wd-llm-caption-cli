@@ -6,7 +6,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from . import llm_inference
+from . import llm_inference, get_llm_dtype
 from ..utils.image_process_util import image_process, image_process_image
 from ..utils.logger_util import Logger
 
@@ -55,9 +55,7 @@ class Llama:
             f'Loading LLM `{self.args.llm_model_name}` with {"CPU" if self.args.llm_use_cpu else "GPU"}...')
         start_time = time.monotonic()
         # LLM dType
-        llm_dtype = torch.float32 if self.args.llm_use_cpu or self.args.llm_dtype == "fp32" else \
-            torch.bfloat16 if self.args.llm_dtype == "bf16" else \
-                torch.float16 if self.args.llm_dtype == "fp16" else torch.float32
+        llm_dtype = get_llm_dtype(logger=self.logger, args=self.args)
         self.logger.info(f'LLM dtype: {llm_dtype}')
         # LLM BNB quantization config
         if self.args.llm_qnt == "4bit":
@@ -116,7 +114,7 @@ class Llama:
                                                                       quantization_config=qnt_config)
         self.llm.eval()
         self.logger.info(f'LLM Loaded in {time.monotonic() - start_time:.1f}s.')
-        # Load processor for `Llama 3.2 Vision Instruct`, `Qwen 2 VL` & `Florence2`
+        # Load processor for `Llama 3.2 Vision Instruct`
         start_time = time.monotonic()
         self.logger.info(f'Loading processor with {"CPU" if self.args.llm_use_cpu else "GPU"}...')
         self.llm_processor = AutoProcessor.from_pretrained(self.llm_path)

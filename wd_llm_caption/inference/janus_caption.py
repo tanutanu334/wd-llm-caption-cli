@@ -9,7 +9,7 @@ from ..utils.image_process_util import image_process, image_process_image
 from ..utils.logger_util import Logger
 
 
-class Qwen2:
+class Janus:
     def __init__(
             self,
             logger: Logger,
@@ -25,6 +25,7 @@ class Qwen2:
 
         self.llm_path = models_paths[0]
         self.llm_processor = None
+        self.tokenizer = None
         self.llm = None
 
     def load_model(self):
@@ -39,12 +40,18 @@ class Qwen2:
             raise ImportError
         # Import transformers
         try:
-            from transformers import AutoProcessor, AutoTokenizer, BitsAndBytesConfig, Qwen2VLForConditionalGeneration
+            from transformers import AutoConfig, BitsAndBytesConfig, AutoModelForCausalLM
         except ImportError as ie:
             self.logger.error(f'Import transformers Failed!\nDetails: {ie}')
             raise ImportError
+        # Import Janus
+        try:
+            from ..third_party.Janus.janus.models import MultiModalityCausalLM, VLChatProcessor
+            from ..third_party.Janus.janus.utils.io import load_pil_images
+        except ImportError as ie:
+            self.logger.error(f'Import Janus Failed!\nDetails: {ie}')
+            raise ImportError
 
-        device = "cpu" if self.args.llm_use_cpu else "cuda"
         # Load LLM
         self.logger.info(
             f'Loading LLM `{self.args.llm_model_name}` with {"CPU" if self.args.llm_use_cpu else "GPU"}...')
@@ -65,14 +72,23 @@ class Qwen2:
             self.logger.info(f'LLM 8bit quantization: Enabled')
         else:
             qnt_config = None
-        # Load Qwen 2 VL model
-        self.llm = Qwen2VLForConditionalGeneration.from_pretrained(self.llm_path,
-                                                                   device_map="auto" \
-                                                                       if not self.args.llm_use_cpu else "cpu",
-                                                                   torch_dtype=llm_dtype,
-                                                                   quantization_config=qnt_config)
-        self.llm.eval()
+        # Load Janus model
+        llm_config = AutoConfig.from_pretrained(self.llm_path)
+        llm_language_config = llm_config.language_config
+        llm_language_config._attn_implementation = 'eager'
+        self.llm = AutoModelForCausalLM.from_pretrained(self.llm_path,
+                                                        device_map="auto" if not self.args.llm_use_cpu else "cpu",
+                                                        torch_dtype=llm_dtype,
+                                                        quantization_config=qnt_config,
+                                                        language_config=llm_language_config,
+                                                        trust_remote_code=True)
         self.logger.info(f'LLM Loaded in {time.monotonic() - start_time:.1f}s.')
+        # Load processor for `Janus`
+        start_time = time.monotonic()
+        self.logger.info(f'Loading processor with {"CPU" if self.args.llm_use_cpu else "GPU"}...')
+        self.llm_processor = VLChatProcessor.from_pretrained(self.llm_path)
+        self.tokenizer = self.llm_processor.tokenizer
+        self.logger.info(f'Processor Loaded in {time.monotonic() - start_time:.1f}s.')
 
     def get_caption(
             self,
@@ -99,54 +115,46 @@ class Qwen2:
             image = image_process_image(image)
 
             if system_prompt:
-                messages = [
-                    {'role': 'system', 'content': f'{system_prompt}'},
-                    {'role': 'user', 'content': [
-                        {'type': 'image'},
-                        {'type': 'text', 'text': f'{user_prompt}'}]
-                     }
-                ]
-            else:
-                self.logger.warning("System prompt NOT FOUND! Processing with out it.")
-                messages = [
-                    {'role': 'user', 'content': [
-                        {'type': 'image'},
-                        {'type': 'text', 'text': f'{user_prompt}'}]
-                     }
-                ]
+                self.logger.warning(f"`{self.args.llm_model_name}` doesn't support system prompt, "
+                                    f"adding system prompt into user prompt...")
+                user_prompt = system_prompt + "\n" + user_prompt
+            messages = [
+                {"role": "<|User|>",
+                 "content": f"<image_placeholder>\n{user_prompt}",
+                 "images": [image], },
+                {"role": "<|Assistant|>", "content": ""},
+            ]
             self.logger.debug(f"\nChat_template:\n{messages}")
-            input_text = self.llm_processor.apply_chat_template(messages, add_generation_prompt=True)
-            inputs = self.llm_processor(image, input_text,
-                                        add_special_tokens=False,
-                                        padding=True,
-                                        return_tensors="pt").to(self.llm.device)
+            prepare_inputs = self.llm_processor(conversations=messages, images=[image], force_batchify=True
+                                                ).to("cpu" if self.args.llm_use_cpu else "cuda",
+                                                     dtype=get_llm_dtype(logger=self.logger, args=self.args))
+            inputs_embeds = self.llm.prepare_inputs_embeds(**prepare_inputs)
             # Generate caption
             self.logger.debug(f'LLM temperature is {temperature}')
             self.logger.debug(f'LLM max_new_tokens is {max_new_tokens}')
-            if temperature == 0 and max_new_tokens == 0:
-                max_new_tokens = 128
-                self.logger.warning(f'LLM temperature and max_new_tokens not set, only '
-                                    f'using default max_new_tokens value {max_new_tokens}')
-                params = {}
+            if temperature == 0:
+                temperature = 0.1
+                self.logger.warning(f'LLM temperature not set, using default value {temperature}')
             else:
-                if temperature == 0:
-                    temperature = 0.6
-                    self.logger.warning(f'LLM temperature not set, using default value {temperature}')
-                else:
-                    self.logger.debug(f'LLM temperature is {temperature}')
-                if max_new_tokens == 0:
-                    max_new_tokens = 128
-                    self.logger.warning(f'LLM max_new_tokens not set, using default value {max_new_tokens}')
-                else:
-                    self.logger.debug(f'LLM max_new_tokens is {max_new_tokens}')
-                params = {
-                    'temperature': temperature,
-                }
-
-            output = self.llm.generate(**inputs, max_new_tokens=max_new_tokens, **params)
-            content = self.llm_processor.decode(output[0][inputs["input_ids"].shape[-1]:],
-                                                skip_special_tokens=True, clean_up_tokenization_spaces=True)
-
+                self.logger.debug(f'LLM temperature is {temperature}')
+            if max_new_tokens == 0:
+                max_new_tokens = 512
+                self.logger.warning(f'LLM max_new_tokens not set, using default value {max_new_tokens}')
+            else:
+                self.logger.debug(f'LLM max_new_tokens is {max_new_tokens}')
+            outputs = self.llm.language_model.generate(
+                inputs_embeds=inputs_embeds,
+                attention_mask=prepare_inputs.attention_mask,
+                pad_token_id=self.tokenizer.eos_token_id,
+                bos_token_id=self.tokenizer.bos_token_id,
+                eos_token_id=self.tokenizer.eos_token_id,
+                max_new_tokens=max_new_tokens,
+                do_sample=False if temperature == 0 else True,
+                use_cache=True,
+                temperature=temperature,
+                top_p=0.95,
+            )
+            content = self.tokenizer.decode(outputs[0].cpu().tolist(), skip_special_tokens=True)
             content_list = str(content).split(".")
             unique_content = list(dict.fromkeys(content_list))
             unique_content = '.'.join(unique_content)
@@ -162,6 +170,8 @@ class Qwen2:
             self.logger.info(f'Unloading LLM...')
             start = time.monotonic()
             del self.llm
+            del self.llm_processor
+            del self.tokenizer
             if hasattr(self, "llm_processer"):
                 del self.llm_processor
             self.logger.info(f'LLM unloaded in {time.monotonic() - start:.1f}s.')

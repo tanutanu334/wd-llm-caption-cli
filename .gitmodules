@@ -1,0 +1,6 @@
+[submodule "third_party"]
+	path = third_party
+	url = https://github.com/deepseek-ai/Janus.git
+[submodule "wd_llm_caption/third_party/Janus"]
+	path = wd_llm_caption/third_party/Janus
+	url = https://github.com/deepseek-ai/Janus.git

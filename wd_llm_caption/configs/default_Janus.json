@@ -1,0 +1,80 @@
+{
+  "Janus-Pro-7B": {
+    "huggingface": {
+      "llm": {
+        "repo_id": "deepseek-ai/Janus-Pro-7B",
+        "revision": "main",
+        "repo_type": "model",
+        "subfolder": "",
+        "file_list": {
+          "config.json": "https://huggingface.co/deepseek-ai/Janus-Pro-7B/resolve/main/config.json",
+          "preprocessor_config.json": "https://huggingface.co/deepseek-ai/Janus-Pro-7B/resolve/main/preprocessor_config.json",
+          "processor_config.json": "https://huggingface.co/deepseek-ai/Janus-Pro-7B/resolve/main/processor_config.json",
+          "special_tokens_map.json": "https://huggingface.co/deepseek-ai/Janus-Pro-7B/resolve/main/special_tokens_map.json",
+          "tokenizer.json": "https://huggingface.co/deepseek-ai/Janus-Pro-7B/resolve/main/tokenizer.json",
+          "tokenizer_config.json": "https://huggingface.co/deepseek-ai/Janus-Pro-7B/resolve/main/tokenizer_config.json",
+          "pytorch_model.bin.index.json": "https://huggingface.co/deepseek-ai/Janus-Pro-7B/resolve/main/pytorch_model.bin.index.json",
+          "pytorch_model-00001-of-00002.bin": "https://huggingface.co/deepseek-ai/Janus-Pro-7B/resolve/main/pytorch_model-00001-of-00002.bin",
+          "pytorch_model-00002-of-00002.bin": "https://huggingface.co/deepseek-ai/Janus-Pro-7B/resolve/main/pytorch_model-00002-of-00002.bin"
+        }
+      }
+    },
+    "modelscope": {
+      "llm": {
+        "repo_id": "deepseek-ai/Janus-Pro-7B",
+        "revision": "master",
+        "repo_type": "model",
+        "subfolder": "",
+        "file_list": {
+          "config.json": "https://modelscope.cn/models/deepseek-ai/Janus-Pro-7B/resolve/master/config.json",
+          "preprocessor_config.json": "https://modelscope.cn/models/deepseek-ai/Janus-Pro-7B/resolve/master/preprocessor_config.json",
+          "processor_config.json": "https://modelscope.cn/models/deepseek-ai/Janus-Pro-7B/resolve/master/processor_config.json",
+          "special_tokens_map.json": "https://modelscope.cn/models/deepseek-ai/Janus-Pro-7B/resolve/master/special_tokens_map.json",
+          "tokenizer.json": "https://modelscope.cn/models/deepseek-ai/Janus-Pro-7B/resolve/master/tokenizer.json",
+          "tokenizer_config.json": "https://modelscope.cn/models/deepseek-ai/Janus-Pro-7B/resolve/master/tokenizer_config.json",
+          "pytorch_model.bin.index.json": "https://modelscope.cn/models/deepseek-ai/Janus-Pro-7B/resolve/master/pytorch_model.bin.index.json",
+          "pytorch_model-00001-of-00002.bin": "https://modelscope.cn/models/deepseek-ai/Janus-Pro-7B/resolve/master/pytorch_model-00001-of-00002.bin",
+          "pytorch_model-00002-of-00002.bin": "https://modelscope.cn/models/deepseek-ai/Janus-Pro-7B/resolve/master/pytorch_model-00002-of-00002.bin"
+        }
+      }
+    }
+  },
+  "Janus-Pro-1B": {
+    "huggingface": {
+      "llm": {
+        "repo_id": "deepseek-ai/Janus-Pro-1B",
+        "revision": "main",
+        "repo_type": "model",
+        "subfolder": "",
+        "file_list": {
+          "config.json": "https://huggingface.co/deepseek-ai/Janus-Pro-7B/resolve/main/config.json",
+          "preprocessor_config.json": "https://huggingface.co/deepseek-ai/Janus-Pro-1B/resolve/main/preprocessor_config.json",
+          "processor_config.json": "https://huggingface.co/deepseek-ai/Janus-Pro-1B/resolve/main/processor_config.json",
+          "special_tokens_map.json": "https://huggingface.co/deepseek-ai/Janus-Pro-1B/resolve/main/special_tokens_map.json",
+          "tokenizer.json": "https://huggingface.co/deepseek-ai/Janus-Pro-1B/resolve/main/tokenizer.json",
+          "tokenizer_config.json": "https://huggingface.co/deepseek-ai/Janus-Pro-1B/resolve/main/tokenizer_config.json",
+          "pytorch_model.bin.index.json": "https://huggingface.co/deepseek-ai/Janus-Pro-1B/resolve/main/pytorch_model.bin.index.json",
+          "pytorch_model.bin": "https://huggingface.co/deepseek-ai/Janus-Pro-1B/resolve/main/pytorch_model.bin"
+        }
+      }
+    },
+    "modelscope": {
+      "llm": {
+        "repo_id": "deepseek-ai/Janus-Pro-1B",
+        "revision": "master",
+        "repo_type": "model",
+        "subfolder": "",
+        "file_list": {
+          "config.json": "https://modelscope.cn/models/deepseek-ai/Janus-Pro-1B/resolve/master/config.json",
+          "preprocessor_config.json": "https://modelscope.cn/models/deepseek-ai/Janus-Pro-1B/resolve/master/preprocessor_config.json",
+          "processor_config.json": "https://modelscope.cn/models/deepseek-ai/Janus-Pro-1B/resolve/master/processor_config.json",
+          "special_tokens_map.json": "https://modelscope.cn/models/deepseek-ai/Janus-Pro-1B/resolve/master/special_tokens_map.json",
+          "tokenizer.json": "https://modelscope.cn/models/deepseek-ai/Janus-Pro-1B/resolve/master/tokenizer.json",
+          "tokenizer_config.json": "https://modelscope.cn/models/deepseek-ai/Janus-Pro-1B/resolve/master/tokenizer_config.json",
+          "pytorch_model.bin.index.json": "https://modelscope.cn/models/deepseek-ai/Janus-Pro-1B/resolve/master/pytorch_model.bin.index.json",
+          "pytorch_model.bin": "https://modelscope.cn/models/deepseek-ai/Janus-Pro-1B/resolve/master/pytorch_model.bin"
+        }
+      }
+    }
+  }
+}

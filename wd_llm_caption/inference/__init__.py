@@ -1,7 +1,9 @@
 import os
+from argparse import Namespace
 from pathlib import Path
 
 from PIL import Image
+from torch import dtype
 from tqdm import tqdm
 
 from ..utils.image_process_util import get_image_paths
@@ -43,6 +45,21 @@ DEFAULT_USER_PROMPT_WITH_WD = """Refer to the following words:
 Please describe this image."""
 
 DEFAULT_USER_PROMPT_WITHOUT_WD = """Please describe this image."""
+
+
+def get_llm_dtype(
+        logger: Logger,
+        args: Namespace
+) -> dtype:
+    try:
+        import torch
+        if args.llm_dtype == "bf16":
+            return torch.bfloat16
+        else:
+            return torch.float16
+    except ImportError as ie:
+        logger.error(f'Import torch Failed!\nDetails: {ie}')
+        raise ImportError
 
 
 def get_caption_file_path(
