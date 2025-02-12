@@ -78,6 +78,7 @@ dependencies = [
     "torch>=2.2.2",
     "onnx>=1.17.0",
     "onnxruntime>=1.19.2",
+    "openai>=1.61.1",
     "huggingface_hub>=0.28.1",
     "modelscope>=1.22.3",
     "gradio>=5.15.0"

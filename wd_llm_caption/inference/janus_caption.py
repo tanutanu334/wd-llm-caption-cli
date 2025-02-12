@@ -96,6 +96,7 @@ class Janus:
             system_prompt: str,
             user_prompt: str,
             temperature: float = 0,
+            top_p: float = 0,
             max_new_tokens: int = 0,
     ) -> str:
         # Import torch
@@ -137,6 +138,11 @@ class Janus:
                 self.logger.warning(f'LLM temperature not set, using default value {temperature}')
             else:
                 self.logger.debug(f'LLM temperature is {temperature}')
+            if top_p == 0:
+                top_p = 0.95
+                self.logger.warning(f'LLM top_p not set, using default value {top_p}')
+            else:
+                self.logger.debug(f'LLM max_new_tokens is {max_new_tokens}')
             if max_new_tokens == 0:
                 max_new_tokens = 512
                 self.logger.warning(f'LLM max_new_tokens not set, using default value {max_new_tokens}')
@@ -152,7 +158,7 @@ class Janus:
                 do_sample=False if temperature == 0 else True,
                 use_cache=True,
                 temperature=temperature,
-                top_p=0.95,
+                top_p=top_p,
             )
             content = self.tokenizer.decode(outputs[0].cpu().tolist(), skip_special_tokens=True)
             content_list = str(content).split(".")

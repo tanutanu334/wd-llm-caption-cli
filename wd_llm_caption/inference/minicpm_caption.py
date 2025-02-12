@@ -86,7 +86,8 @@ class Minicpm2:
             system_prompt: str,
             user_prompt: str,
             temperature: float = 0,
-            max_new_tokens: int = 0,
+            top_p: float = 0,
+            max_new_tokens: int = 0
     ) -> str:
         # Import torch
         try:
@@ -124,13 +125,18 @@ class Minicpm2:
                     self.logger.warning(f'LLM temperature not set, using default value {temperature}')
                 else:
                     self.logger.debug(f'LLM temperature is {temperature}')
+                if top_p == 0:
+                    top_p = 0.8
+                    self.logger.warning(f'LLM top_p not set, using default value {temperature}')
+                else:
+                    self.logger.debug(f'LLM top_p is {temperature}')
                 if max_new_tokens == 0:
                     max_new_tokens = 2048
                     self.logger.warning(f'LLM max_new_tokens not set, using default value {max_new_tokens}')
                 else:
                     self.logger.debug(f'LLM max_new_tokens is {max_new_tokens}')
                 params = {
-                    'top_p': 0.8,
+                    'top_p': top_p,
                     'top_k': 100,
                     'temperature': temperature,
                     'repetition_penalty': 1.05,

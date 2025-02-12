@@ -15,8 +15,9 @@ JOY_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_joy.jso
 LLAMA_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_llama_3.2V.json")
 QWEN_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_qwen2_vl.json")
 MINICPM_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_minicpm.json")
-JANUS_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_Janus.json")
+JANUS_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_janus.json")
 FLORENCE_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_florence.json")
+ONLINE_LLM_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_online_llm.json")
 
 SKIP_DOWNLOAD = True
 
@@ -28,7 +29,7 @@ CAPTION_FN = None
 def read_json(config_file):
     with open(config_file, 'r', encoding='utf-8') as config_json:
         datas = json.load(config_json)
-        return list(datas.keys())
+        return datas
 
 
 def gui_setup_args():
@@ -82,8 +83,9 @@ def gui():
                             caption_method = gr.Radio(label="Caption method", choices=["WD+LLM", "WD", "LLM"],
                                                       value="WD+LLM")
                             llm_choice = gr.Radio(label="Choice LLM",
-                                                  choices=["Llama", "Joy", "Qwen", "MiniCPM", "Janus", "Florence"],
-                                                  value="Llama")
+                                                  choices=["Joy", "Llama", "Qwen", "MiniCPM", "Janus", "Florence",
+                                                           "Online LLM"],
+                                                  value="Joy")
 
                             def llm_choice_visibility(caption_method_radio):
                                 return gr.update(visible=True if "LLM" in caption_method_radio else False)
@@ -91,24 +93,41 @@ def gui():
                             caption_method.select(fn=llm_choice_visibility, inputs=caption_method, outputs=llm_choice)
 
                         with gr.Column(min_width=240):
-                            wd_models = gr.Dropdown(label="WD models", choices=read_json(WD_CONFIG),
-                                                    value=read_json(WD_CONFIG)[0])
-                            joy_models = gr.Dropdown(label="Joy models", choices=read_json(JOY_CONFIG),
-                                                     value=read_json(JOY_CONFIG)[0], visible=False)
-                            llama_models = gr.Dropdown(label="Llama models", choices=read_json(LLAMA_CONFIG),
-                                                       value=read_json(LLAMA_CONFIG)[0])
-                            qwen_models = gr.Dropdown(label="Qwen models", choices=read_json(QWEN_CONFIG),
-                                                      value=read_json(QWEN_CONFIG)[0], visible=False)
-                            minicpm_models = gr.Dropdown(label="MiniCPM models", choices=read_json(MINICPM_CONFIG),
-                                                         value=read_json(MINICPM_CONFIG)[0], visible=False)
-                            janus_models = gr.Dropdown(label="Janus models", choices=read_json(JANUS_CONFIG),
-                                                          value=read_json(JANUS_CONFIG)[0], visible=False)
-                            florence_models = gr.Dropdown(label="Florence models", choices=read_json(FLORENCE_CONFIG),
-                                                          value=read_json(FLORENCE_CONFIG)[0], visible=False)
+                            wd_models = gr.Dropdown(label="WD models", choices=list(read_json(WD_CONFIG).keys()),
+                                                    value=list(read_json(WD_CONFIG).keys())[0])
+                            joy_models = gr.Dropdown(label="Joy models", choices=list(read_json(JOY_CONFIG).keys()),
+                                                     value=list(read_json(JOY_CONFIG).keys())[0])
+                            llama_models = gr.Dropdown(label="Llama models", choices=list(read_json(LLAMA_CONFIG).keys()),
+                                                       value=list(read_json(LLAMA_CONFIG).keys())[0], visible=False)
+                            qwen_models = gr.Dropdown(label="Qwen models", choices=list(read_json(QWEN_CONFIG).keys()),
+                                                      value=list(read_json(QWEN_CONFIG).keys())[0], visible=False)
+                            minicpm_models = gr.Dropdown(label="MiniCPM models", choices=list(read_json(MINICPM_CONFIG).keys()),
+                                                         value=list(read_json(MINICPM_CONFIG).keys())[0], visible=False)
+                            janus_models = gr.Dropdown(label="Janus models", choices=list(read_json(JANUS_CONFIG).keys()),
+                                                          value=list(read_json(JANUS_CONFIG).keys())[0], visible=False)
+                            florence_models = gr.Dropdown(label="Florence models", choices=list(read_json(FLORENCE_CONFIG).keys()),
+                                                          value=list(read_json(FLORENCE_CONFIG).keys())[0], visible=False)
+                            online_llm_services = gr.Dropdown(label="Online LLM services", choices=list(read_json(ONLINE_LLM_CONFIG).keys()),
+                                                          value=list(read_json(ONLINE_LLM_CONFIG).keys())[0], visible=False)
+
+                            online_llm_services_model_list = gr.Dropdown(label="Online LLM model name",
+                                                                         choices=list(read_json(ONLINE_LLM_CONFIG)[online_llm_services.value]["models_list"].keys()),
+                                                                         value=list(read_json(ONLINE_LLM_CONFIG)[online_llm_services.value]["models_list"].keys())[0],
+                                                                         visible=False)
+                            online_llm_services_custom_base_url = gr.Textbox(label="Online LLM service url", type="text",
+                                                            placeholder="Enter your online llm service url.", visible=False)
+                            online_llm_services_custom_model_name = gr.Textbox(label="Online LLM model name", type="text",
+                                                                placeholder="Enter your online llm model name.", visible=False)
+
+                            online_llm_services_custom_endpoint = gr.Textbox(label="Online LLM service endpoint", type="password",
+                                                                      placeholder="Enter your online llm service endpoint.", visible=False)
+                            online_llm_api_key = gr.Textbox(label="Online LLM API key", type="password",
+                                                            placeholder="Enter your online llm API key.", visible=False)
+
 
                     with gr.Column(min_width=240):
                         with gr.Column(min_width=240):
-                            wd_force_use_cpu = gr.Checkbox(label="Force use CPU for WD inference")
+                            wd_force_use_cpu = gr.Checkbox(label="Use CPU for WD inference")
                             llm_use_cpu = gr.Checkbox(label="Use cpu for LLM inference")
 
                         llm_use_patch = gr.Checkbox(label="Use LLM LoRA to avoid censored")
@@ -211,8 +230,10 @@ def gui():
                         with gr.Accordion(label="Advanced Options", open=False):
                             llm_temperature = gr.Slider(label="temperature for LLM model",
                                                         minimum=0, maximum=1.0, value=0, step=0.1)
+                            llm_top_p = gr.Slider(label="top_p for LLM model",
+                                                        minimum=0, maximum=1.0, value=0, step=0.1)
                             llm_max_tokens = gr.Slider(label="max token for LLM model",
-                                                       minimum=0, maximum=2048, value=0, step=1)
+                                                       minimum=0, maximum=8192, value=0, step=1)
                             image_size = gr.Slider(label="Resize image for inference",
                                                    minimum=256, maximum=2048, value=1024, step=1)
                             auto_unload = gr.Checkbox(label="Auto Unload Models after inference.")
@@ -267,12 +288,12 @@ def gui():
         model_site.change(fn=huggingface_token_update_visibility,
                           inputs=model_site, outputs=huggingface_token)
 
-        def caption_method_update_visibility(caption_method_radio):
+        def caption_method_update_visibility(caption_method_radio, llm_choice_radio):
             run_method_visible = gr.update(visible=True if caption_method_radio == "WD+LLM" else False)
             wd_force_use_cpu_visible = wd_model_visible = gr.update(
                 visible=True if "WD" in caption_method_radio else False)
             llm_load_settings_visible = llm_use_cpu_visible = gr.update(
-                visible=True if "LLM" in caption_method_radio else False)
+                visible=True if "LLM" in caption_method_radio and llm_choice_radio != "Online LLM" else False)
             wd_settings_visible = gr.update(visible=True if "WD" in caption_method_radio else False)
             llm_settings_visible = gr.update(visible=True if "LLM" in caption_method_radio else False)
             return run_method_visible, wd_model_visible, wd_force_use_cpu_visible, \
@@ -294,9 +315,21 @@ def gui():
                 visible=True if "LLM" in caption_method_radio and llm_choice_radio == "Janus" else False)
             florence_model_visible = gr.update(
                 visible=True if "LLM" in caption_method_radio and llm_choice_radio == "Florence" else False)
+            online_llm_model_visible = gr.update(
+                visible=True if "LLM" in caption_method_radio and llm_choice_radio == "Online LLM" else False)
 
-            return joy_model_visible, llama_model_visible, llama_use_patch_visible, \
-                qwen_model_visible, minicpm_model_visible, janus_model_visible, florence_model_visible
+            return joy_model_visible, llama_model_visible, llama_use_patch_visible, qwen_model_visible, \
+                minicpm_model_visible, janus_model_visible, florence_model_visible, online_llm_model_visible
+        def online_llm_update_visibility(caption_method_radio, llm_choice_radio, online_llm_services_dropdown):
+            online_llm_services_model_list_visible = gr.update(
+                choices=list(read_json(ONLINE_LLM_CONFIG)[online_llm_services_dropdown]["models_list"].keys()) if online_llm_services_dropdown != "Custom" else None,
+                value=list(read_json(ONLINE_LLM_CONFIG)[online_llm_services_dropdown]["models_list"].keys())[0] if online_llm_services_dropdown != "Custom" else None,
+                visible=True if "LLM" in caption_method_radio and llm_choice_radio == "Online LLM" and online_llm_services_dropdown != "Custom" else False)
+            online_llm_services_custom_base_url_visible = gr.update(visible=True if "LLM" in caption_method_radio and llm_choice_radio == "Online LLM" and online_llm_services_dropdown == "Custom" else False)
+            online_llm_services_custom_model_name_visible = gr.update(visible=True if "LLM" in caption_method_radio and llm_choice_radio == "Online LLM" and online_llm_services_dropdown == "Custom" else False)
+            online_llm_services_endpoint_visible = gr.update(visible=True if "LLM" in caption_method_radio and llm_choice_radio == "Online LLM" and online_llm_services_dropdown == "Doubao" else False)
+            online_llm_api_key_visible = gr.update(visible=True if "LLM" in caption_method_radio and llm_choice_radio == "Online LLM" else False)
+            return online_llm_services_model_list_visible, online_llm_services_custom_base_url_visible, online_llm_services_custom_model_name_visible, online_llm_services_endpoint_visible, online_llm_api_key_visible
 
         def joy_formated_prompts_visibility(llm_choice_radio, joy_models_dropdown):
             joy_formated_prompts_visible = gr.update(
@@ -306,20 +339,24 @@ def gui():
                                                                                       "Joy-Caption-Alpha-Two"] else False)
             return joy_formated_prompts_visible, extra_options_visible
 
-        caption_method.change(fn=caption_method_update_visibility, inputs=caption_method,
+        caption_method.change(fn=caption_method_update_visibility, inputs=[caption_method, llm_choice],
                               outputs=[run_method, wd_models, wd_force_use_cpu, llm_use_cpu,
                                        wd_settings, llm_load_settings, llm_settings])
         caption_method.change(fn=llm_choice_update_visibility, inputs=[caption_method, llm_choice, joy_models],
                               outputs=[joy_models, llama_models, llm_use_patch,
-                                       qwen_models, minicpm_models, janus_models, florence_models])
+                                       qwen_models, minicpm_models, janus_models, florence_models, online_llm_services])
         llm_choice.change(fn=llm_choice_update_visibility, inputs=[caption_method, llm_choice, joy_models],
                           outputs=[joy_models, llama_models, llm_use_patch,
-                                   qwen_models, minicpm_models, janus_models, florence_models])
+                                   qwen_models, minicpm_models, janus_models, florence_models, online_llm_services])
         llm_choice.change(fn=joy_formated_prompts_visibility, inputs=[llm_choice, joy_models],
                           outputs=[joy_formated_prompts, extra_options_column])
+        llm_choice.change(fn=online_llm_update_visibility, inputs=[caption_method, llm_choice, online_llm_services],
+                          outputs=[online_llm_services_model_list, online_llm_services_custom_base_url, online_llm_services_custom_model_name, online_llm_services_custom_endpoint, online_llm_api_key])
+        online_llm_services.change(fn=online_llm_update_visibility, inputs=[caption_method, llm_choice, online_llm_services],
+                          outputs=[online_llm_services_model_list, online_llm_services_custom_base_url, online_llm_services_custom_model_name, online_llm_services_custom_endpoint, online_llm_api_key])
         joy_models.change(fn=llm_choice_update_visibility, inputs=[caption_method, llm_choice, joy_models],
                           outputs=[joy_models, llama_models, llm_use_patch,
-                                   qwen_models, minicpm_models, janus_models, florence_models])
+                                   qwen_models, minicpm_models, janus_models, florence_models, online_llm_services])
         joy_models.change(fn=joy_formated_prompts_visibility, inputs=[llm_choice, joy_models],
                           outputs=[joy_formated_prompts, extra_options_column])
 
@@ -456,8 +493,17 @@ def gui():
         def use_florence(check_caption_method, check_llm_choice):
             return True if check_caption_method in ["llm", "wd+llm"] and check_llm_choice == "florence" else False
 
+        def use_online_llm(check_caption_method, check_llm_choice):
+            return True if check_caption_method in ["llm", "wd+llm"] and check_llm_choice in ["online llm", "online_llm"] else False
+
         def load_models_interactive_group():
             return [
+                gr.update(interactive=False),
+                gr.update(interactive=False),
+                gr.update(interactive=False),
+                gr.update(interactive=False),
+                gr.update(interactive=False),
+                gr.update(interactive=False),
                 gr.update(interactive=False),
                 gr.update(interactive=False),
                 gr.update(interactive=False),
@@ -496,6 +542,12 @@ def gui():
                 gr.update(interactive=True),
                 gr.update(interactive=True),
                 gr.update(interactive=True),
+                gr.update(interactive=True),
+                gr.update(interactive=False),
+                gr.update(interactive=False),
+                gr.update(interactive=False),
+                gr.update(interactive=False),
+                gr.update(interactive=False),
                 gr.update(variant='primary'),
                 gr.update(variant='secondary')
             ]
@@ -519,6 +571,7 @@ def gui():
                                        llm_system_prompt,
                                        llm_user_prompt,
                                        llm_temperature,
+                                       llm_top_p,
                                        llm_max_tokens,
                                        image_size,
                                        auto_unload,
@@ -545,6 +598,7 @@ def gui():
                                       llm_system_prompt,
                                       llm_user_prompt,
                                       llm_temperature,
+                                      llm_top_p,
                                       llm_max_tokens,
                                       image_size,
                                       auto_unload,
@@ -569,7 +623,13 @@ def gui():
                 minicpm_model_value,
                 janus_model_value,
                 florence_model_value,
-                wd_force_use_cpu_value,
+                online_llm_services_value,
+                online_llm_services_model_list_value,
+                online_llm_services_custom_base_url_value,
+                online_llm_services_custom_model_name_value,
+                online_llm_services_custom_endpoint_value,
+                online_llm_api_key_value,
+                wd_use_cpu_value,
                 llm_use_cpu_value,
                 llm_use_patch_value,
                 llm_dtype_value,
@@ -615,13 +675,35 @@ def gui():
                 elif use_florence(args.caption_method, args.llm_choice):
                     args.llm_config = FLORENCE_CONFIG
                     args.llm_model_name = str(florence_model_value)
+                elif use_online_llm(args.caption_method, args.llm_choice):
+                    args.llm_config = ONLINE_LLM_CONFIG
+                    args.llm_choice = "online_llm"
+                    if not online_llm_api_key_value:
+                        raise gr.Error("Online LLM API key not define!")
+                    args.llm_online_api_key = online_llm_api_key_value
+                    print(args.llm_online_api_key)
+                    if online_llm_services_value != "Custom":
+                        args.llm_online_base_url = read_json(ONLINE_LLM_CONFIG)[online_llm_services_value]["base_url"]
+                        if "doubao" in online_llm_services_model_list_value.lower():
+                            if not online_llm_services_model_list_value:
+                                raise gr.Error("Online LLM service endpoint not define!")
+                            args.llm_model_name = online_llm_services_custom_endpoint_value
+                        else:
+                            args.llm_model_name = online_llm_services_model_list_value
+                    else:
+                        if not online_llm_services_custom_base_url_value:
+                            raise gr.Error("Online LLM service url not define!")
+                        args.llm_online_base_url = online_llm_services_custom_base_url_value
+                        if not online_llm_services_custom_model_name_value:
+                            raise gr.Error("Online LLM model name not define!")
+                        args.llm_model_name = online_llm_services_custom_model_name_value
 
                 if CAPTION_FN is None:
                     CAPTION_FN = caption.Caption()
                     CAPTION_FN.set_logger(args)
 
                 caption_init = CAPTION_FN
-                args.wd_force_use_cpu = bool(wd_force_use_cpu_value)
+                args.wd_force_use_cpu = bool(wd_use_cpu_value)
 
                 args.llm_use_cpu = bool(llm_use_cpu_value)
                 args.llm_patch = bool(llm_use_patch_value)
@@ -668,6 +750,7 @@ def gui():
                                      llm_system_prompt_value,
                                      llm_user_prompt_value,
                                      llm_temperature_value,
+                                     llm_top_p_value,
                                      llm_max_tokens_value,
                                      image_size_value,
                                      auto_unload_value,
@@ -696,6 +779,7 @@ def gui():
             args.llm_system_prompt = str(llm_system_prompt_value)
             args.llm_user_prompt = str(llm_user_prompt_value)
             args.llm_temperature = float(llm_temperature_value)
+            args.llm_top_p = float(llm_top_p_value)
             args.llm_max_tokens = int(llm_max_tokens_value)
 
             args.image_size = int(image_size_value)
@@ -723,7 +807,8 @@ def gui():
                     or use_qwen(args.caption_method, args.llm_choice) \
                     or use_minicpm(args.caption_method, args.llm_choice) \
                     or use_janus(args.caption_method, args.llm_choice) \
-                    or use_florence(args.caption_method, args.llm_choice):
+                    or use_florence(args.caption_method, args.llm_choice) \
+                    or use_online_llm(args.caption_method, args.llm_choice):
                 get_caption_fn.my_logger.debug(f"Caption with LLM: {args.llm_model_name}.")
                 # LLM Caption
                 caption_text = get_caption_fn.my_llm.get_caption(
@@ -732,6 +817,7 @@ def gui():
                     user_prompt=str(args.llm_user_prompt).format(wd_tags=tag_text) if tag_text else \
                         str(args.llm_user_prompt),
                     temperature=args.llm_temperature,
+                    top_p=args.llm_top_p,
                     max_new_tokens=args.llm_max_tokens
                 )
                 get_caption_fn.my_logger.info(f"LLM Caption content: {caption_text}")
@@ -762,6 +848,7 @@ def gui():
                                     llm_system_prompt_value,
                                     llm_user_prompt_value,
                                     llm_temperature_value,
+                                    llm_top_p_value,
                                     llm_max_tokens_value,
                                     image_size_value,
                                     auto_unload_value,
@@ -803,6 +890,7 @@ def gui():
                 args.llm_system_prompt = str(llm_system_prompt_value)
                 args.llm_user_prompt = str(llm_user_prompt_value)
                 args.llm_temperature = float(llm_temperature_value)
+                args.llm_top_p = float(llm_top_p_value)
                 args.llm_max_tokens = int(llm_max_tokens_value)
 
                 args.image_size = int(image_size_value)
@@ -851,12 +939,18 @@ def gui():
                                         caption_method, llm_choice,
                                         wd_models, joy_models, llama_models,
                                         qwen_models, minicpm_models, janus_models, florence_models,
+                                        online_llm_services, online_llm_services_model_list,
+                                        online_llm_services_custom_base_url, online_llm_services_custom_model_name,
+                                        online_llm_services_custom_endpoint, online_llm_api_key,
                                         wd_force_use_cpu,
                                         llm_use_cpu, llm_use_patch, llm_dtype, llm_qnt],
                                 outputs=[model_site, huggingface_token,
                                          caption_method, llm_choice,
                                          wd_models, joy_models, llama_models,
                                          qwen_models, minicpm_models, janus_models, florence_models,
+                                         online_llm_services, online_llm_services_model_list,
+                                         online_llm_services_custom_base_url, online_llm_services_custom_model_name,
+                                         online_llm_services_custom_endpoint, online_llm_api_key,
                                          wd_force_use_cpu,
                                          llm_use_cpu, llm_use_patch, llm_dtype, llm_qnt,
                                          load_model_button, unload_model_button])
@@ -864,8 +958,11 @@ def gui():
         unload_model_button.click(fn=caption_unload_models,
                                   outputs=[model_site, huggingface_token,
                                            caption_method, llm_choice,
-                                           wd_models, joy_models, llama_models,
-                                           qwen_models, minicpm_models, janus_models, florence_models,
+                                           wd_models, joy_models, llama_models, qwen_models,
+                                           minicpm_models, janus_models, florence_models,
+                                           online_llm_services, online_llm_services_model_list,
+                                           online_llm_services_custom_base_url, online_llm_services_custom_model_name,
+                                           online_llm_services_custom_endpoint, online_llm_api_key,
                                            wd_force_use_cpu,
                                            llm_use_cpu, llm_use_patch, llm_dtype, llm_qnt,
                                            load_model_button, unload_model_button])

@@ -80,6 +80,7 @@ class Qwen2:
             system_prompt: str,
             user_prompt: str,
             temperature: float = 0,
+            top_p: float = 0,
             max_new_tokens: int = 0,
     ) -> str:
         # Import torch

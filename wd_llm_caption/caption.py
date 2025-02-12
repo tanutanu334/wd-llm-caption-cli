@@ -14,6 +14,7 @@ from .inference.janus_caption import Janus
 from .inference.joy_caption import Joy
 from .inference.llama_caption import Llama
 from .inference.minicpm_caption import Minicpm2
+from .inference.online_llm_caption import OpenAIapi
 from .inference.qwen_caption import Qwen2
 from .inference.wd_tagger import Tagger
 from .utils.download_util import download_models
@@ -31,8 +32,9 @@ class Caption:
         self.use_llama = False
         self.use_qwen = False
         self.use_minicpm = False
-        self.use_janus = None
+        self.use_janus = False
         self.use_florence = False
+        self.use_online_llm = False
 
         self.my_logger = None
 
@@ -99,6 +101,8 @@ class Caption:
             self,
             args: argparse.Namespace
     ):
+        self.my_logger.info(f"Caption method: {args.caption_method}")
+        self.my_logger.info(f"Run method: {args.run_method}")
         # Set flags
         self.use_wd = True if args.caption_method in ["wd", "wd+llm"] else False
         self.use_joy = True if args.caption_method in ["llm", "wd+llm"] and args.llm_choice == "joy" else False
@@ -106,7 +110,9 @@ class Caption:
         self.use_qwen = True if args.caption_method in ["llm", "wd+llm"] and args.llm_choice == "qwen" else False
         self.use_minicpm = True if args.caption_method in ["llm", "wd+llm"] and args.llm_choice == "minicpm" else False
         self.use_janus = True if args.caption_method in ["llm", "wd+llm"] and args.llm_choice == "janus" else False
-        self.use_florence = True if args.caption_method in ["llm", "wd+llm"] and args.llm_choice == "florence" else False
+        self.use_florence = True if args.caption_method in ["llm",
+                                                            "wd+llm"] and args.llm_choice == "florence" else False
+        self.use_online_llm = True if args.caption_method in ["llm", "wd+llm"] and args.llm_choice == "online_llm" else False
         # Set models save path
         if os.path.exists(Path(args.models_save_path)):
             models_save_path = Path(args.models_save_path)
@@ -187,7 +193,7 @@ class Caption:
             )
         elif self.use_janus:
             if not args.llm_config:
-                llm_config_file = os.path.join(Path(__file__).parent, 'configs', 'default_Janus.json')
+                llm_config_file = os.path.join(Path(__file__).parent, 'configs', 'default_janus.json')
             else:
                 llm_config_file = Path(args.llm_config)
             # Download Qwen models
@@ -274,6 +280,13 @@ class Caption:
                 args=args,
             )
             self.my_llm.load_model()
+        elif self.use_online_llm:
+            # Load Online models
+            self.my_llm = OpenAIapi(
+                logger=self.my_logger,
+                args=args,
+            )
+            self.my_llm.load_model()
 
     def run_inference(
             self,
@@ -352,6 +365,7 @@ class Caption:
                                 system_prompt=str(args.llm_system_prompt),
                                 user_prompt=str(args.llm_user_prompt).format(wd_tags=tag_text),
                                 temperature=args.llm_temperature,
+                                top_p=args.llm_top_p,
                                 max_new_tokens=args.llm_max_tokens
                             )
                             if not (args.not_overwrite and os.path.isfile(llm_caption_file)):
@@ -430,8 +444,12 @@ class Caption:
                     pbar.set_description('Processing with Qwen model...')
                 elif self.use_minicpm:
                     pbar.set_description('Processing with Mini-CPM model...')
+                elif self.use_janus:
+                    pbar.set_description('Processing with Janus model...')
                 elif self.use_florence:
                     pbar.set_description('Processing with Florence model...')
+                elif self.use_online_llm:
+                    pbar.set_description(f'Processing with Online model({args.llm_model_name})...')
                 self.my_llm.inference()
                 pbar.update(1)
 
@@ -439,7 +457,7 @@ class Caption:
         else:
             if self.use_wd:
                 self.my_tagger.inference()
-            elif self.use_joy or self.use_llama or self.use_qwen or self.use_minicpm or self.use_janus or self.use_florence:
+            elif self.use_joy or self.use_llama or self.use_qwen or self.use_minicpm or self.use_janus or self.use_florence or self.use_online_llm:
                 self.my_llm.inference()
 
         total_inference_time = calculate_time(start_inference_time)
@@ -581,7 +599,6 @@ def setup_args() -> argparse.Namespace:
         default=None,
         help='custom caption file save path.'
     )
-
     wd_args = args.add_argument_group("WD Caption")
     wd_args.add_argument(
         '--wd_config',
@@ -689,14 +706,29 @@ def setup_args() -> argparse.Namespace:
         '--llm_choice',
         type=str,
         default='llama',
-        choices=['joy', 'llama', 'qwen', 'minicpm', 'florence'],
-        help='select llm models[`joy`, `llama`, `qwen`, `minicpm`, `florence`, `janus`], default is `llama`.',
+        choices=['joy', 'llama', 'qwen', 'minicpm', 'janus', 'florence', 'online_llm'],
+        help='select llm models[`joy`, `llama`, `qwen`, `minicpm`, `janus`, `florence`, `online_llm`], default is `llama`.',
     )
     llm_args.add_argument(
         '--llm_config',
         type=str,
         help='config json for LLM Caption models, default is `default_llama_3.2V.json`'
     )
+    llm_args.add_argument(
+        '--llm_online_api_key',
+        type=str,
+        help='API Key for online LLM Caption models.'
+    )
+    llm_args.add_argument(
+        '--llm_online_base_url',
+        type=str,
+        help='Base url for online LLM Caption models.'
+    )
+    # llm_args.add_argument(
+    #     '--llm_online_endpoint',
+    #     type=str,
+    #     help='Endpoint for online LLM Caption models. (Current Only Doubao need this)'
+    # )
     llm_args.add_argument(
         '--llm_model_name',
         type=str,
@@ -760,6 +792,12 @@ def setup_args() -> argparse.Namespace:
         type=float,
         default=0,
         help='temperature for LLM model, default is `0`，means use llm own default value.'
+    )
+    llm_args.add_argument(
+        '--llm_top_p',
+        type=float,
+        default=0,
+        help='top_p for LLM model, default is `0`，means use llm own default value.'
     )
     llm_args.add_argument(
         '--llm_max_tokens',

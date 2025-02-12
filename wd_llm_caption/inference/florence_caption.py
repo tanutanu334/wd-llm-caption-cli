@@ -72,7 +72,8 @@ class Florence2:
             system_prompt: str,
             user_prompt: str,
             temperature: float = 0,
-            max_new_tokens: int = 0,
+            top_p: float = 0,
+            max_new_tokens: int = 0
     ) -> str:
         # Import torch
         try:
@@ -92,8 +93,8 @@ class Florence2:
 
             if system_prompt or user_prompt:
                 self.logger.warning(f"`{self.args.llm_model_name}` doesn't support system prompt or user prompt!")
-            if temperature != 0 or max_new_tokens != 0:
-                self.logger.warning(f"`{self.args.llm_model_name}` doesn't support temperature or max tokens!")
+            if temperature != 0 or max_new_tokens != 0 or top_p != 0:
+                self.logger.warning(f"`{self.args.llm_model_name}` doesn't support temperature, max tokens or top_p!")
 
             def run_inference(task_prompt, image, text_input=None):
                 if text_input is None:
