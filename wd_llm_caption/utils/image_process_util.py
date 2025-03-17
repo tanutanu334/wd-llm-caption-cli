@@ -101,7 +101,7 @@ def image_process_gbr(
     return padded_image
 
 
-def encode_image_to_base64(image: Image.Image, image_format="PNG"):
+def encode_image_to_base64(image: Image.Image, image_format="PNG") -> str:
     with BytesIO() as bytes_output:
         image.save(bytes_output, format=image_format)
         image_bytes = bytes_output.getvalue()

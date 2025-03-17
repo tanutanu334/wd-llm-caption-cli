@@ -122,8 +122,6 @@ class Qwen2:
                                         padding=True,
                                         return_tensors="pt").to(self.llm.device)
             # Generate caption
-            self.logger.debug(f'LLM temperature is {temperature}')
-            self.logger.debug(f'LLM max_new_tokens is {max_new_tokens}')
             if temperature == 0 and max_new_tokens == 0:
                 max_new_tokens = 128
                 self.logger.warning(f'LLM temperature and max_new_tokens not set, only '

@@ -50,19 +50,19 @@ class Tagger:
         provider_options = None
         if 'CUDAExecutionProvider' in ort.get_available_providers() and not self.args.wd_force_use_cpu:
             providers = (['CUDAExecutionProvider'])
-            self.logger.info('Use CUDA device for inference')
+            self.logger.info('Use CUDA device for WD Tagger inference')
         elif 'ROCMExecutionProvider' in ort.get_available_providers() and not self.args.wd_force_use_cpu:
             providers = (['ROCMExecutionProvider'])
-            self.logger.info('Use ROCM device for inference')
+            self.logger.info('Use ROCM device for WD Tagger inference')
         elif "OpenVINOExecutionProvider" in ort.get_available_providers() and not self.args.wd_force_use_cpu:
             providers = (["OpenVINOExecutionProvider"])
             provider_options = [{'device_type': "GPU_FP32"}]
-            self.logger.info('Use OpenVINO device for inference')
+            self.logger.info('Use OpenVINO device for WD Tagger inference')
         else:
             if self.args.wd_force_use_cpu:
-                self.logger.warning('wd_force_use_cpu ENABLED, will only use cpu for inference!')
+                self.logger.warning('wd_force_use_cpu ENABLED, will only use cpu for WD Tagger inference!')
             else:
-                self.logger.info('WD will use CPU for inference')
+                self.logger.info('Use CPU for WD Tagger inference')
                 self.args.wd_force_use_cpu = True
             providers = (['CPUExecutionProvider'])
 

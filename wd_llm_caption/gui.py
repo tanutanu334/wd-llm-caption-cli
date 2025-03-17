@@ -16,6 +16,7 @@ LLAMA_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_llama
 QWEN_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_qwen2_vl.json")
 MINICPM_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_minicpm.json")
 JANUS_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_janus.json")
+GEMMA3_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_gemma3.json")
 FLORENCE_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_florence.json")
 ONLINE_LLM_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_online_llm.json")
 
@@ -83,8 +84,8 @@ def gui():
                             caption_method = gr.Radio(label="Caption method", choices=["WD+LLM", "WD", "LLM"],
                                                       value="WD+LLM")
                             llm_choice = gr.Radio(label="Choice LLM",
-                                                  choices=["Joy", "Llama", "Qwen", "MiniCPM", "Janus", "Florence",
-                                                           "Online LLM"],
+                                                  choices=["Joy", "Llama", "Qwen", "MiniCPM", "Janus", "Gemma3",
+                                                           "Florence", "Online LLM"],
                                                   value="Joy")
 
                             def llm_choice_visibility(caption_method_radio):
@@ -105,6 +106,8 @@ def gui():
                                                          value=list(read_json(MINICPM_CONFIG).keys())[0], visible=False)
                             janus_models = gr.Dropdown(label="Janus models", choices=list(read_json(JANUS_CONFIG).keys()),
                                                           value=list(read_json(JANUS_CONFIG).keys())[0], visible=False)
+                            gemma3_models = gr.Dropdown(label="Gemma3 models", choices=list(read_json(GEMMA3_CONFIG).keys()),
+                                                          value=list(read_json(GEMMA3_CONFIG).keys())[0], visible=False)
                             florence_models = gr.Dropdown(label="Florence models", choices=list(read_json(FLORENCE_CONFIG).keys()),
                                                           value=list(read_json(FLORENCE_CONFIG).keys())[0], visible=False)
                             online_llm_services = gr.Dropdown(label="Online LLM services", choices=list(read_json(ONLINE_LLM_CONFIG).keys()),
@@ -313,13 +316,16 @@ def gui():
                 visible=True if "LLM" in caption_method_radio and llm_choice_radio == "MiniCPM" else False)
             janus_model_visible = gr.update(
                 visible=True if "LLM" in caption_method_radio and llm_choice_radio == "Janus" else False)
+            gemma3_model_visible = gr.update(
+                visible=True if "LLM" in caption_method_radio and llm_choice_radio == "Gemma3" else False)
             florence_model_visible = gr.update(
                 visible=True if "LLM" in caption_method_radio and llm_choice_radio == "Florence" else False)
             online_llm_model_visible = gr.update(
                 visible=True if "LLM" in caption_method_radio and llm_choice_radio == "Online LLM" else False)
 
             return joy_model_visible, llama_model_visible, llama_use_patch_visible, qwen_model_visible, \
-                minicpm_model_visible, janus_model_visible, florence_model_visible, online_llm_model_visible
+                minicpm_model_visible, janus_model_visible, gemma3_model_visible, florence_model_visible, \
+                online_llm_model_visible
         def online_llm_update_visibility(caption_method_radio, llm_choice_radio, online_llm_services_dropdown):
             online_llm_services_model_list_visible = gr.update(
                 choices=list(read_json(ONLINE_LLM_CONFIG)[online_llm_services_dropdown]["models_list"].keys()) if online_llm_services_dropdown != "Custom" else None,
@@ -344,10 +350,12 @@ def gui():
                                        wd_settings, llm_load_settings, llm_settings])
         caption_method.change(fn=llm_choice_update_visibility, inputs=[caption_method, llm_choice, joy_models],
                               outputs=[joy_models, llama_models, llm_use_patch,
-                                       qwen_models, minicpm_models, janus_models, florence_models, online_llm_services])
+                                       qwen_models, minicpm_models, janus_models, gemma3_models, florence_models,
+                                       online_llm_services])
         llm_choice.change(fn=llm_choice_update_visibility, inputs=[caption_method, llm_choice, joy_models],
                           outputs=[joy_models, llama_models, llm_use_patch,
-                                   qwen_models, minicpm_models, janus_models, florence_models, online_llm_services])
+                                   qwen_models, minicpm_models, janus_models, gemma3_models, florence_models,
+                                   online_llm_services])
         llm_choice.change(fn=joy_formated_prompts_visibility, inputs=[llm_choice, joy_models],
                           outputs=[joy_formated_prompts, extra_options_column])
         llm_choice.change(fn=online_llm_update_visibility, inputs=[caption_method, llm_choice, online_llm_services],
@@ -356,13 +364,13 @@ def gui():
                           outputs=[online_llm_services_model_list, online_llm_services_custom_base_url, online_llm_services_custom_model_name, online_llm_services_custom_endpoint, online_llm_api_key])
         joy_models.change(fn=llm_choice_update_visibility, inputs=[caption_method, llm_choice, joy_models],
                           outputs=[joy_models, llama_models, llm_use_patch,
-                                   qwen_models, minicpm_models, janus_models, florence_models, online_llm_services])
+                                   qwen_models, minicpm_models, janus_models, gemma3_models, florence_models,
+                                   online_llm_services])
         joy_models.change(fn=joy_formated_prompts_visibility, inputs=[llm_choice, joy_models],
                           outputs=[joy_formated_prompts, extra_options_column])
 
         def llm_use_patch_visibility(llama_model_dropdown):
-            return gr.update(
-                visible=True if llama_model_dropdown == "Llama-3.2-11B-Vision-Instruct" else False)
+            return gr.update(visible=True if llama_model_dropdown == "Llama-3.2-11B-Vision-Instruct" else False)
 
         llama_models.select(fn=llm_use_patch_visibility, inputs=llama_models, outputs=llm_use_patch)
 
@@ -490,6 +498,9 @@ def gui():
         def use_janus(check_caption_method, check_llm_choice):
             return True if check_caption_method in ["llm", "wd+llm"] and check_llm_choice == "janus" else False
 
+        def use_gemma3(check_caption_method, check_llm_choice):
+            return True if check_caption_method in ["llm", "wd+llm"] and check_llm_choice == "gemma3" else False
+
         def use_florence(check_caption_method, check_llm_choice):
             return True if check_caption_method in ["llm", "wd+llm"] and check_llm_choice == "florence" else False
 
@@ -498,6 +509,7 @@ def gui():
 
         def load_models_interactive_group():
             return [
+                gr.update(interactive=False),
                 gr.update(interactive=False),
                 gr.update(interactive=False),
                 gr.update(interactive=False),
@@ -543,11 +555,12 @@ def gui():
                 gr.update(interactive=True),
                 gr.update(interactive=True),
                 gr.update(interactive=True),
-                gr.update(interactive=False),
-                gr.update(interactive=False),
-                gr.update(interactive=False),
-                gr.update(interactive=False),
-                gr.update(interactive=False),
+                gr.update(interactive=True),
+                gr.update(interactive=True),
+                gr.update(interactive=True),
+                gr.update(interactive=True),
+                gr.update(interactive=True),
+                gr.update(interactive=True),
                 gr.update(variant='primary'),
                 gr.update(variant='secondary')
             ]
@@ -622,6 +635,7 @@ def gui():
                 qwen_model_value,
                 minicpm_model_value,
                 janus_model_value,
+                gemma3_model_value,
                 florence_model_value,
                 online_llm_services_value,
                 online_llm_services_model_list_value,
@@ -672,6 +686,9 @@ def gui():
                 elif use_janus(args.caption_method, args.llm_choice):
                     args.llm_config = JANUS_CONFIG
                     args.llm_model_name = str(janus_model_value)
+                elif use_gemma3(args.caption_method, args.llm_choice):
+                    args.llm_config = GEMMA3_CONFIG
+                    args.llm_model_name = str(gemma3_model_value)
                 elif use_florence(args.caption_method, args.llm_choice):
                     args.llm_config = FLORENCE_CONFIG
                     args.llm_model_name = str(florence_model_value)
@@ -807,6 +824,7 @@ def gui():
                     or use_qwen(args.caption_method, args.llm_choice) \
                     or use_minicpm(args.caption_method, args.llm_choice) \
                     or use_janus(args.caption_method, args.llm_choice) \
+                    or use_gemma3(args.caption_method, args.llm_choice) \
                     or use_florence(args.caption_method, args.llm_choice) \
                     or use_online_llm(args.caption_method, args.llm_choice):
                 get_caption_fn.my_logger.debug(f"Caption with LLM: {args.llm_model_name}.")
@@ -938,7 +956,7 @@ def gui():
                                 inputs=[model_site, huggingface_token,
                                         caption_method, llm_choice,
                                         wd_models, joy_models, llama_models,
-                                        qwen_models, minicpm_models, janus_models, florence_models,
+                                        qwen_models, minicpm_models, janus_models, gemma3_models, florence_models,
                                         online_llm_services, online_llm_services_model_list,
                                         online_llm_services_custom_base_url, online_llm_services_custom_model_name,
                                         online_llm_services_custom_endpoint, online_llm_api_key,
@@ -947,7 +965,7 @@ def gui():
                                 outputs=[model_site, huggingface_token,
                                          caption_method, llm_choice,
                                          wd_models, joy_models, llama_models,
-                                         qwen_models, minicpm_models, janus_models, florence_models,
+                                         qwen_models, minicpm_models, janus_models, gemma3_models, florence_models,
                                          online_llm_services, online_llm_services_model_list,
                                          online_llm_services_custom_base_url, online_llm_services_custom_model_name,
                                          online_llm_services_custom_endpoint, online_llm_api_key,
@@ -959,7 +977,7 @@ def gui():
                                   outputs=[model_site, huggingface_token,
                                            caption_method, llm_choice,
                                            wd_models, joy_models, llama_models, qwen_models,
-                                           minicpm_models, janus_models, florence_models,
+                                           minicpm_models, janus_models, gemma3_models, florence_models,
                                            online_llm_services, online_llm_services_model_list,
                                            online_llm_services_custom_base_url, online_llm_services_custom_model_name,
                                            online_llm_services_custom_endpoint, online_llm_api_key,

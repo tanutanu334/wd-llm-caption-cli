@@ -126,7 +126,7 @@ class Joy:
                                                                      torch_dtype=llm_dtype,
                                                                      quantization_config=qnt_config)
         else:
-            # Load `Llama 3.1 Vision Instruct` LoRA patch
+            # Load `Llama 3.1 Instruct` LoRA patch
             if self.args.llm_model_name in ["Joy-Caption-Alpha-One", "Joy-Caption-Alpha-Two"] and \
                     self.args.llm_patch and self.llm_patch_path:
                 adapter_config_json = os.path.join(self.llm_patch_path, "adapter_config.json")
@@ -138,7 +138,7 @@ class Joy:
                         data['base_model_name_or_path'] = str(self.llm_path)
                         with open(adapter_config_json, 'w') as file:
                             json.dump(data, file, indent=2)
-                        self.logger.warning(f"`{adapter_config_json}` patched.")
+                        self.logger.info(f"`{adapter_config_json}` patched.")
                     else:
                         self.logger.warning(f"`{adapter_config_json}` already patched.")
                     self.llm_path = self.llm_patch_path

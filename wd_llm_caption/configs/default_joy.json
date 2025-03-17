@@ -104,7 +104,7 @@
       "image_adapter": {
         "repo_id": "fireicewolf/joy-caption-alpha-two",
         "revision": "master",
-        "repo_type": "space",
+        "repo_type": "model",
         "subfolder": "cgrkzexw-599808",
         "file_list": {
           "image_adapter.pt": "https://www.modelscope.cn/models/fireicewolf/joy-caption-alpha-two/resolve/master/cgrkzexw-599808/image_adapter.pt",
@@ -147,7 +147,7 @@
       "patch": {
         "repo_id": "fireicewolf/joy-caption-alpha-two",
         "revision": "master",
-        "repo_type": "space",
+        "repo_type": "model",
         "subfolder": "cgrkzexw-599808/text_model",
         "file_list": {
           "tokenizer.json": "https://www.modelscope.cn/models/fireicewolf/joy-caption-alpha-two/resolve/master/cgrkzexw-599808/text_model/tokenizer.json",
@@ -220,7 +220,7 @@
         "image_adapter": {
           "repo_id": "fireicewolf/joy-caption-alpha-one",
           "revision": "master",
-          "repo_type": "space",
+          "repo_type": "model",
           "subfolder": "9em124t2-499968",
           "file_list": {
             "image_adapter.pt": "https://www.modelscope.cn/models/fireicewolf/joy-caption-alpha-one/resolve/master/9em124t2-499968/image_adapter.pt",
@@ -261,9 +261,9 @@
           }
         },
         "patch": {
-          "repo_id": "fancyfeast/joy-caption-alpha-one",
+          "repo_id": "fireicewolf/joy-caption-alpha-one",
           "revision": "master",
-          "repo_type": "space",
+          "repo_type": "model",
           "subfolder": "9em124t2-499968/text_model",
           "file_list": {
             "adapter_config.json": "https://www.modelscope.cn/models/fireicewolf/joy-caption-alpha-one/resolve/master/9em124t2-499968/text_model/adapter_config.json",

@@ -1,0 +1,220 @@
+{
+  "gemma-3-4b-it-abliterated": {
+    "huggingface": {
+      "llm": {
+        "repo_id": "kabachuha/gemma3-4b-it-abliterated",
+        "revision": "main",
+        "repo_type": "model",
+        "subfolder": "",
+        "file_list": {
+          "added_tokens.json": "https://huggingface.co/kabachuha/gemma3-4b-it-abliterated/resolve/main/added_tokens.json",
+          "chat_template.json": "https://huggingface.co/kabachuha/gemma3-4b-it-abliterated/resolve/main/chat_template.json",
+          "config.json": "https://huggingface.co/kabachuha/gemma3-4b-it-abliterated/resolve/main/config.json",
+          "generation_config.json": "https://huggingface.co/kabachuha/gemma3-4b-it-abliterated/resolve/main/generation_config.json",
+          "model.safetensors.index.json": "https://huggingface.co/kabachuha/gemma3-4b-it-abliterated/resolve/main/model.safetensors.index.json",
+          "preprocessor_config.json": "https://huggingface.co/kabachuha/gemma3-4b-it-abliterated/resolve/main/preprocessor_config.json",
+          "processor_config.json": "https://huggingface.co/kabachuha/gemma3-4b-it-abliterated/resolve/main/processor_config.json",
+          "special_tokens_map.json": "https://huggingface.co/kabachuha/gemma3-4b-it-abliterated/resolve/main/special_tokens_map.json",
+          "tokenizer.json": "https://huggingface.co/kabachuha/gemma3-4b-it-abliterated/resolve/main/tokenizer.json",
+          "tokenizer.model": "https://huggingface.co/kabachuha/gemma3-4b-it-abliterated/resolve/main/tokenizer.model",
+          "tokenizer_config.json": "https://huggingface.co/kabachuha/gemma3-4b-it-abliterated/resolve/main/tokenizer_config.json",
+          "model-00001-of-00002.safetensors": "https://huggingface.co/kabachuha/gemma3-4b-it-abliterated/resolve/main/model-00001-of-00002.safetensors",
+          "model-00002-of-00002.safetensors": "https://huggingface.co/kabachuha/gemma3-4b-it-abliterated/resolve/main/model-00002-of-00002.safetensors"
+        }
+      }
+    },
+    "modelscope": {
+      "llm": {
+        "repo_id": "fireicewolf/google-gemma-3-4b-it-abliterated",
+        "revision": "master",
+        "repo_type": "model",
+        "subfolder": "",
+        "file_list": {
+          "added_tokens.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it-abliterated/resolve/main/added_tokens.json",
+          "chat_template.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it-abliterated/resolve/main/chat_template.json",
+          "config.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it-abliterated/resolve/main/config.json",
+          "generation_config.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it-abliterated/resolve/main/generation_config.json",
+          "model.safetensors.index.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it-abliterated/resolve/main/model.safetensors.index.json",
+          "preprocessor_config.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it-abliterated/resolve/main/preprocessor_config.json",
+          "processor_config.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it-abliterated/resolve/main/processor_config.json",
+          "special_tokens_map.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it-abliterated/resolve/main/special_tokens_map.json",
+          "tokenizer.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it-abliterated/resolve/main/tokenizer.json",
+          "tokenizer.model": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it-abliterated/resolve/main/tokenizer.model",
+          "tokenizer_config.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it-abliterated/resolve/main/tokenizer_config.json",
+          "model-00001-of-00002.safetensors": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it-abliterated/resolve/main/model-00001-of-00002.safetensors",
+          "model-00002-of-00002.safetensors": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it-abliterated/resolve/main/model-00002-of-00002.safetensors"
+        }
+      }
+    }
+  },
+  "gemma-3-4b-it": {
+    "huggingface": {
+      "llm": {
+        "repo_id": "google/gemma-3-4b-it",
+        "revision": "main",
+        "repo_type": "model",
+        "subfolder": "",
+        "file_list": {
+          "added_tokens.json": "https://huggingface.co/google/gemma-3-4b-it/resolve/main/added_tokens.json",
+          "chat_template.json": "https://huggingface.co/google/gemma-3-4b-it/resolve/main/chat_template.json",
+          "config.json": "https://huggingface.co/google/gemma-3-4b-it/resolve/main/config.json",
+          "generation_config.json": "https://huggingface.co/google/gemma-3-4b-it/resolve/main/generation_config.json",
+          "model.safetensors.index.json": "https://huggingface.co/google/gemma-3-4b-it/resolve/main/model.safetensors.index.json",
+          "preprocessor_config.json": "https://huggingface.co/google/gemma-3-4b-it/resolve/main/preprocessor_config.json",
+          "processor_config.json": "https://huggingface.co/google/gemma-3-4b-it/resolve/main/processor_config.json",
+          "special_tokens_map.json": "https://huggingface.co/google/gemma-3-4b-it/resolve/main/special_tokens_map.json",
+          "tokenizer.json": "https://huggingface.co/google/gemma-3-4b-it/resolve/main/tokenizer.json",
+          "tokenizer.model": "https://huggingface.co/google/gemma-3-4b-it/resolve/main/tokenizer.model",
+          "tokenizer_config.json": "https://huggingface.co/google/gemma-3-4b-it/resolve/main/tokenizer_config.json",
+          "model-00001-of-00002.safetensors": "https://huggingface.co/google/gemma-3-4b-it/resolve/main/model-00001-of-00002.safetensors",
+          "model-00002-of-00002.safetensors": "https://huggingface.co/google/gemma-3-4b-it/resolve/main/model-00002-of-00002.safetensors"
+        }
+      }
+    },
+    "modelscope": {
+      "llm": {
+        "repo_id": "fireicewolf/google-gemma-3-4b-it",
+        "revision": "master",
+        "repo_type": "model",
+        "subfolder": "",
+        "file_list": {
+          "added_tokens.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it/resolve/main/added_tokens.json",
+          "chat_template.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it/resolve/main/chat_template.json",
+          "config.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it/resolve/main/config.json",
+          "generation_config.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it/resolve/main/generation_config.json",
+          "model.safetensors.index.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it/resolve/main/model.safetensors.index.json",
+          "preprocessor_config.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it/resolve/main/preprocessor_config.json",
+          "processor_config.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it/resolve/main/processor_config.json",
+          "special_tokens_map.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it/resolve/main/special_tokens_map.json",
+          "tokenizer.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it/resolve/main/tokenizer.json",
+          "tokenizer.model": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it/resolve/main/tokenizer.model",
+          "tokenizer_config.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it/resolve/main/tokenizer_config.json",
+          "model-00001-of-00002.safetensors": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it/resolve/main/model-00001-of-00002.safetensors",
+          "model-00002-of-00002.safetensors": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-4b-it/resolve/main/model-00002-of-00002.safetensors"
+        }
+      }
+    }
+  },
+  "gemma-3-12b-it": {
+    "huggingface": {
+      "llm": {
+        "repo_id": "google/gemma-3-12b-it",
+        "revision": "main",
+        "repo_type": "model",
+        "subfolder": "",
+        "file_list": {
+          "added_tokens.json": "https://huggingface.co/google/gemma-3-12b-it/resolve/main/added_tokens.json",
+          "chat_template.json": "https://huggingface.co/google/gemma-3-12b-it/resolve/main/chat_template.json",
+          "config.json": "https://huggingface.co/google/gemma-3-12b-it/resolve/main/config.json",
+          "generation_config.json": "https://huggingface.co/google/gemma-3-12b-it/resolve/main/generation_config.json",
+          "model.safetensors.index.json": "https://huggingface.co/google/gemma-3-12b-it/resolve/main/model.safetensors.index.json",
+          "preprocessor_config.json": "https://huggingface.co/google/gemma-3-12b-it/resolve/main/preprocessor_config.json",
+          "processor_config.json": "https://huggingface.co/google/gemma-3-12b-it/resolve/main/processor_config.json",
+          "special_tokens_map.json": "https://huggingface.co/google/gemma-3-12b-it/resolve/main/special_tokens_map.json",
+          "tokenizer.json": "https://huggingface.co/google/gemma-3-12b-it/resolve/main/tokenizer.json",
+          "tokenizer.model": "https://huggingface.co/google/gemma-3-12b-it/resolve/main/tokenizer.model",
+          "tokenizer_config.json": "https://huggingface.co/google/gemma-3-12b-it/resolve/main/tokenizer_config.json",
+          "model-00001-of-00005.safetensors": "https://huggingface.co/google/gemma-3-12b-it/resolve/main/model-00001-of-00005.safetensors",
+          "model-00002-of-00005.safetensors": "https://huggingface.co/google/gemma-3-12b-it/resolve/main/model-00002-of-00005.safetensors",
+          "model-00003-of-00005.safetensors": "https://huggingface.co/google/gemma-3-12b-it/resolve/main/model-00003-of-00005.safetensors",
+          "model-00004-of-00005.safetensors": "https://huggingface.co/google/gemma-3-12b-it/resolve/main/model-00004-of-00005.safetensors",
+          "model-00005-of-00005.safetensors": "https://huggingface.co/google/gemma-3-12b-it/resolve/main/model-00005-of-00005.safetensors"
+        }
+      }
+    },
+    "modelscope": {
+      "llm": {
+        "repo_id": "fireicewolf/google-gemma-3-12b-it",
+        "revision": "master",
+        "repo_type": "model",
+        "subfolder": "",
+        "file_list": {
+          "added_tokens.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-12b-it/resolve/main/added_tokens.json",
+          "chat_template.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-12b-it/resolve/main/chat_template.json",
+          "config.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-12b-it/resolve/main/config.json",
+          "generation_config.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-12b-it/resolve/main/generation_config.json",
+          "model.safetensors.index.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-12b-it/resolve/main/model.safetensors.index.json",
+          "preprocessor_config.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-12b-it/resolve/main/preprocessor_config.json",
+          "processor_config.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-12b-it/resolve/main/processor_config.json",
+          "special_tokens_map.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-12b-it/resolve/main/special_tokens_map.json",
+          "tokenizer.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-12b-it/resolve/main/tokenizer.json",
+          "tokenizer.model": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-12b-it/resolve/main/tokenizer.model",
+          "tokenizer_config.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-12b-it/resolve/main/tokenizer_config.json",
+          "model-00001-of-00005.safetensors": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-12b-it/resolve/main/model-00001-of-00005.safetensors",
+          "model-00002-of-00005.safetensors": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-12b-it/resolve/main/model-00002-of-00005.safetensors",
+          "model-00003-of-00005.safetensors": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-12b-it/resolve/main/model-00003-of-00005.safetensors",
+          "model-00004-of-00005.safetensors": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-12b-it/resolve/main/model-00004-of-00005.safetensors",
+          "model-00005-of-00005.safetensors": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-12b-it/resolve/main/model-00005-of-00005.safetensors"
+        }
+      }
+    }
+  },
+  "gemma-3-27b-it": {
+    "huggingface": {
+      "llm": {
+        "repo_id": "google/gemma-3-27b-it",
+        "revision": "main",
+        "repo_type": "model",
+        "subfolder": "",
+        "file_list": {
+          "added_tokens.json": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/added_tokens.json",
+          "chat_template.json": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/chat_template.json",
+          "config.json": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/config.json",
+          "generation_config.json": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/generation_config.json",
+          "model.safetensors.index.json": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/model.safetensors.index.json",
+          "preprocessor_config.json": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/preprocessor_config.json",
+          "processor_config.json": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/processor_config.json",
+          "special_tokens_map.json": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/special_tokens_map.json",
+          "tokenizer.json": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/tokenizer.json",
+          "tokenizer.model": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/tokenizer.model",
+          "tokenizer_config.json": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/tokenizer_config.json",
+          "model-00001-of-00012.safetensors": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/model-00001-of-00012.safetensors",
+          "model-00002-of-00012.safetensors": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/model-00002-of-00012.safetensors",
+          "model-00003-of-00012.safetensors": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/model-00003-of-00012.safetensors",
+          "model-00004-of-00012.safetensors": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/model-00004-of-00012.safetensors",
+          "model-00005-of-00012.safetensors": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/model-00005-of-00012.safetensors",
+          "model-00006-of-00012.safetensors": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/model-00006-of-00012.safetensors",
+          "model-00007-of-00012.safetensors": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/model-00007-of-00012.safetensors",
+          "model-00008-of-00012.safetensors": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/model-00008-of-00012.safetensors",
+          "model-00009-of-00012.safetensors": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/model-00009-of-00012.safetensors",
+          "model-00010-of-00012.safetensors": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/model-00010-of-00012.safetensors",
+          "model-00011-of-00012.safetensors": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/model-00012-of-00012.safetensors",
+          "model-00012-of-00012.safetensors": "https://huggingface.co/google/gemma-3-27b-it/resolve/main/model-00012-of-00012.safetensors"
+        }
+      }
+    },
+    "modelscope": {
+      "llm": {
+        "repo_id": "fireicewolf/google-gemma-3-27b-it",
+        "revision": "master",
+        "repo_type": "model",
+        "subfolder": "",
+        "file_list": {
+          "added_tokens.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/added_tokens.json",
+          "chat_template.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/chat_template.json",
+          "config.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/config.json",
+          "generation_config.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/generation_config.json",
+          "model.safetensors.index.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/model.safetensors.index.json",
+          "preprocessor_config.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/preprocessor_config.json",
+          "processor_config.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/processor_config.json",
+          "special_tokens_map.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/special_tokens_map.json",
+          "tokenizer.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/tokenizer.json",
+          "tokenizer.model": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/tokenizer.model",
+          "tokenizer_config.json": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/tokenizer_config.json",
+          "model-00001-of-00012.safetensors": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/model-00001-of-00012.safetensors",
+          "model-00002-of-00012.safetensors": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/model-00002-of-00012.safetensors",
+          "model-00003-of-00012.safetensors": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/model-00003-of-00012.safetensors",
+          "model-00004-of-00012.safetensors": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/model-00004-of-00012.safetensors",
+          "model-00005-of-00012.safetensors": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/model-00005-of-00012.safetensors",
+          "model-00006-of-00012.safetensors": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/model-00006-of-00012.safetensors",
+          "model-00007-of-00012.safetensors": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/model-00007-of-00012.safetensors",
+          "model-00008-of-00012.safetensors": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/model-00008-of-00012.safetensors",
+          "model-00009-of-00012.safetensors": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/model-00009-of-00012.safetensors",
+          "model-00010-of-00012.safetensors": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/model-00010-of-00012.safetensors",
+          "model-00011-of-00012.safetensors": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/model-00011-of-00012.safetensors",
+          "model-00012-of-00012.safetensors": "https://www.modelscope.cn/models/fireicewolf/google-gemma-3-27b-it/resolve/main/model-00012-of-00012.safetensors"
+        }
+      }
+    }
+  }
+}
