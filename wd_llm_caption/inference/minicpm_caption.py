@@ -127,9 +127,9 @@ class Minicpm2:
                     self.logger.debug(f'LLM temperature is {temperature}')
                 if top_p == 0:
                     top_p = 0.8
-                    self.logger.warning(f'LLM top_p not set, using default value {temperature}')
+                    self.logger.warning(f'LLM top_p not set, using default value {top_p}')
                 else:
-                    self.logger.debug(f'LLM top_p is {temperature}')
+                    self.logger.debug(f'LLM top_p is {top_p}')
                 if max_new_tokens == 0:
                     max_new_tokens = 2048
                     self.logger.warning(f'LLM max_new_tokens not set, using default value {max_new_tokens}')

@@ -39,7 +39,8 @@ class Qwen2:
             raise ImportError
         # Import transformers
         try:
-            from transformers import AutoProcessor, AutoTokenizer, BitsAndBytesConfig, Qwen2VLForConditionalGeneration
+            from transformers import (AutoProcessor, AutoTokenizer, BitsAndBytesConfig,
+                                      Qwen2VLForConditionalGeneration, Qwen2_5_VLForConditionalGeneration)
         except ImportError as ie:
             self.logger.error(f'Import transformers Failed!\nDetails: {ie}')
             raise ImportError
@@ -66,13 +67,25 @@ class Qwen2:
         else:
             qnt_config = None
         # Load Qwen 2 VL model
-        self.llm = Qwen2VLForConditionalGeneration.from_pretrained(self.llm_path,
-                                                                   device_map="auto" \
-                                                                       if not self.args.llm_use_cpu else "cpu",
-                                                                   torch_dtype=llm_dtype,
-                                                                   quantization_config=qnt_config)
+        if str(self.args.llm_model_name).startswith("Qwen2.5-VL"):
+            self.llm = Qwen2_5_VLForConditionalGeneration.from_pretrained(self.llm_path,
+                                                                          device_map="auto" \
+                                                                              if not self.args.llm_use_cpu else "cpu",
+                                                                          torch_dtype=llm_dtype,
+                                                                          quantization_config=qnt_config)
+        else:
+            self.llm = Qwen2VLForConditionalGeneration.from_pretrained(self.llm_path,
+                                                                       device_map="auto" \
+                                                                           if not self.args.llm_use_cpu else "cpu",
+                                                                       torch_dtype=llm_dtype,
+                                                                       quantization_config=qnt_config)
         self.llm.eval()
         self.logger.info(f'LLM Loaded in {time.monotonic() - start_time:.1f}s.')
+        # Load processor
+        start_time = time.monotonic()
+        self.logger.info(f'Loading processor with {"CPU" if self.args.llm_use_cpu else "GPU"}...')
+        self.llm_processor = AutoProcessor.from_pretrained(self.llm_path)
+        self.logger.info(f'Processor Loaded in {time.monotonic() - start_time:.1f}s.')
 
     def get_caption(
             self,
@@ -116,7 +129,7 @@ class Qwen2:
                      }
                 ]
             self.logger.debug(f"\nChat_template:\n{messages}")
-            input_text = self.llm_processor.apply_chat_template(messages, add_generation_prompt=True)
+            input_text = self.llm_processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
             inputs = self.llm_processor(image, input_text,
                                         add_special_tokens=False,
                                         padding=True,
@@ -129,10 +142,15 @@ class Qwen2:
                 params = {}
             else:
                 if temperature == 0:
-                    temperature = 0.6
+                    temperature = 0.7
                     self.logger.warning(f'LLM temperature not set, using default value {temperature}')
                 else:
                     self.logger.debug(f'LLM temperature is {temperature}')
+                if top_p == 0:
+                    top_p = 0.8
+                    self.logger.warning(f'LLM top_p not set, using default value {top_p}')
+                else:
+                    self.logger.debug(f'LLM top_p is {top_p}')
                 if max_new_tokens == 0:
                     max_new_tokens = 128
                     self.logger.warning(f'LLM max_new_tokens not set, using default value {max_new_tokens}')
@@ -140,6 +158,8 @@ class Qwen2:
                     self.logger.debug(f'LLM max_new_tokens is {max_new_tokens}')
                 params = {
                     'temperature': temperature,
+                    'top_p': top_p,
+                    'do_sample': True
                 }
 
             output = self.llm.generate(**inputs, max_new_tokens=max_new_tokens, **params)
