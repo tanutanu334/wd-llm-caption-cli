@@ -20,9 +20,14 @@ This tool can make a caption with danbooru style tags or a nature language descr
 GUI support Joy formated prompt inputs (Only for Joy-Caption Alpha Two, Joy-Caption Alpha Two Llava).
 
 
+2024.10.27: Add Joy Caption Beta One Llava Support.
+
+=======
+
 2025.6.8: Add Joy Caption Beta One Llava Support.
 =======
 2024.10.27: Add Joy Caption Beta One Llava Support.
+
 
 
 
@@ -550,3 +555,12 @@ on [SmilingWolf/wd-tagger models](https://huggingface.co/spaces/SmilingWolf/wd-t
 [Qwen/Qwen2-VL-7B-Instruct](https://huggingface.co/Qwen/Qwen2-VL-7B-Instruct), [openbmb/Mini-CPM V2.6](https://huggingface.co/openbmb/MiniCPM-V-2_6)
 and [microsoft/florence2](https://huggingface.co/collections/microsoft/florence-6669f44df0d87d9c3bfb76de).
 Without their works(👏👏), this repo won't exist.
+
+## Prompt Refinement
+
+Use `prompt_refiner.py` to generate an image from a prompt, caption it, and append missing words to improve the prompt.
+
+```bash
+python prompt_refiner.py "a girl in a city" --sd_model stabilityai/stable-diffusion-2-1-base
+```
+
