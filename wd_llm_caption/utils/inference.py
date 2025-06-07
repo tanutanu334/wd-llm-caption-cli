@@ -101,10 +101,10 @@ class LLM:
             if (self.args.llm_model_name == "Joy-Caption-Pre-Alpha" and len(models_paths) != 3) or \
                     (self.args.llm_model_name in ["Joy-Caption-Alpha-One", "Joy-Caption-Alpha-Two"]
                      and len(models_paths) != 4) or \
-                    (self.args.llm_model_name == "Joy-Caption-Alpha-Two-Llava" and len(models_paths) != 1):
+                    (self.args.llm_model_name in ["Joy-Caption-Alpha-Two-Llava", "Joy-Caption-Beta-One-Llava"] and len(models_paths) != 1):
                 self.logger.error(self.logger.error(f"Invalid models paths: {models_paths}!!!"))
                 raise ValueError
-            if self.args.llm_model_name == "Joy-Caption-Alpha-Two-Llava":
+            if self.args.llm_model_name in ["Joy-Caption-Alpha-Two-Llava", "Joy-Caption-Beta-One-Llava"]:
                 self.llm_path = models_paths[0]
             else:
                 self.image_adapter_path = models_paths[0]
@@ -173,7 +173,7 @@ class LLM:
 
         device = "cpu" if self.args.llm_use_cpu else "cuda"
         # Load CLIP model for Joy
-        if self.models_type == "joy" and self.args.llm_model_name != "Joy-Caption-Alpha-Two-Llava":
+        if self.models_type == "joy" and self.args.llm_model_name not in ["Joy-Caption-Alpha-Two-Llava", "Joy-Caption-Beta-One-Llava"]:
             self.logger.info(f'Loading CLIP with {"CPU" if self.args.llm_use_cpu else "GPU"}...')
             start_time = time.monotonic()
             self.clip_processor = AutoProcessor.from_pretrained(self.clip_path)
@@ -233,10 +233,10 @@ class LLM:
             qnt_config = None
 
         if self.models_type in ["joy", "florence"]:
-            if self.args.llm_model_name == "Joy-Caption-Alpha-Two-Llava":
-                # TODO: make Joy-Caption-Alpha-Two-Llava quantization work.
+            if self.args.llm_model_name in ["Joy-Caption-Alpha-Two-Llava", "Joy-Caption-Beta-One-Llava"]:
+                # TODO: make Joy-Caption-Alpha-Two-Llava and Beta-One-Llava quantization work.
                 if self.args.llm_qnt != "none":
-                    self.logger.warning(f"`Joy-Caption-Alpha-Two-Llava` current not support quantization.")
+                    self.logger.warning(f"`{self.args.llm_model_name}` current not support quantization.")
                     self.args.llm_qnt = "none"
                     qnt_config = None
                 self.llm = LlavaForConditionalGeneration.from_pretrained(self.llm_path,  # Load `Llava` model
@@ -348,7 +348,7 @@ class LLM:
             self.logger.info(f'Processor Loaded in {time.monotonic() - start_time:.1f}s.')
 
         # Load Image Adapter for Joy
-        if self.models_type == "joy" and self.args.llm_model_name != "Joy-Caption-Alpha-Two-Llava":
+        if self.models_type == "joy" and self.args.llm_model_name not in ["Joy-Caption-Alpha-Two-Llava", "Joy-Caption-Beta-One-Llava"]:
             if self.args.llm_model_name == "Joy-Caption-Pre-Alpha":
                 class ImageAdapter(nn.Module):
                     def __init__(self, input_features: int, output_features: int):
@@ -483,7 +483,7 @@ class LLM:
                     torch.bfloat16 if self.args.llm_dtype == "bf16" else \
                         torch.float16 if self.args.llm_dtype == "fp16" else torch.float32
                 # Normalize the image
-                if self.args.llm_model_name == "Joy-Caption-Alpha-Two-Llava":
+                if self.args.llm_model_name in ["Joy-Caption-Alpha-Two-Llava", "Joy-Caption-Beta-One-Llava"]:
                     pixel_values = pixel_values / 255.0
                     pixel_values = TVF.normalize(pixel_values, [0.5], [0.5])
                     pixel_values = pixel_values.to(llm_dtype).unsqueeze(0)
@@ -587,7 +587,7 @@ class LLM:
                     else:
                         self.logger.debug(f'LLM max_new_tokens is {max_new_tokens}')
 
-                    if self.args.llm_model_name == "Joy-Caption-Alpha-Two-Llava":
+                    if self.args.llm_model_name in ["Joy-Caption-Alpha-Two-Llava", "Joy-Caption-Beta-One-Llava"]:
                         # Tokenize the conversation
                         # prompt_str is tokenized separately so we can do the calculations below
                         convo_tokens = self.llm_tokenizer.encode(convo_string, add_special_tokens=False,

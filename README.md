@@ -16,8 +16,10 @@ This tool can make a caption with danbooru style tags or a nature language descr
 
 2024.10.19: Add option to save WD tags and LLM Captions in one file.(Only support CLI mode or GUI batch mode.)
 
-2024.10.18: Add Joy Caption Alpha One, Joy-Caption Alpha Two, Joy-Caption Alpha Two Llava Support.  
+2024.10.18: Add Joy Caption Alpha One, Joy-Caption Alpha Two, Joy-Caption Alpha Two Llava Support.
 GUI support Joy formated prompt inputs (Only for Joy-Caption Alpha Two, Joy-Caption Alpha Two Llava).
+
+2024.10.27: Add Joy Caption Beta One Llava Support.
 
 2024.10.13: Add Florence2 Support.  
 Now LLM will use own default generate params while `--llm_temperature` and `--llm_max_tokens` are 0.
@@ -178,6 +180,7 @@ place).
 |       Joy-Caption-Alpha-One        |    [Hugging Face](https://huggingface.co/spaces/fancyfeast/joy-caption-alpha-one)     |        [ModelScope](https://www.modelscope.cn/models/fireicewolf/joy-caption-alpha-one)        |
 |       Joy-Caption-Alpha-Two        |    [Hugging Face](https://huggingface.co/spaces/fancyfeast/joy-caption-alpha-two)     |        [ModelScope](https://www.modelscope.cn/models/fireicewolf/joy-caption-alpha-two)        |
 |    Joy-Caption-Alpha-Two-Llava     | [Hugging Face](https://huggingface.co/fancyfeast/llama-joycaption-alpha-two-hf-llava) | [ModelScope](https://www.modelscope.cn/models/fireicewolf/llama-joycaption-alpha-two-hf-llava) |
+|    Joy-Caption-Beta-One-Llava      | [Hugging Face](https://huggingface.co/fancyfeast/llama-joycaption-beta-one-hf-llava)  | [ModelScope](https://www.modelscope.cn/models/fireicewolf/llama-joycaption-beta-one-hf-llava) |
 | siglip-so400m-patch14-384(Google)  |        [Hugging Face](https://huggingface.co/google/siglip-so400m-patch14-384)        |      [ModelScope](https://www.modelscope.cn/models/fireicewolf/siglip-so400m-patch14-384)      |
 |         Meta-Llama-3.1-8B          |          [Hugging Face](https://huggingface.co/meta-llama/Meta-Llama-3.1-8B)          |          [ModelScope](https://www.modelscope.cn/models/fireicewolf/Meta-Llama-3.1-8B)          |
 | unsloth/Meta-Llama-3.1-8B-Instruct |       [Hugging Face](https://huggingface.co/unsloth/Meta-Llama-3.1-8B-Instruct)       | [ModelScope](https://www.modelscope.cn/models/fireicewolf/unsloth-Meta-Llama-3.1-8B-Instruct)  |
@@ -542,3 +545,12 @@ on [SmilingWolf/wd-tagger models](https://huggingface.co/spaces/SmilingWolf/wd-t
 [Qwen/Qwen2-VL-7B-Instruct](https://huggingface.co/Qwen/Qwen2-VL-7B-Instruct), [openbmb/Mini-CPM V2.6](https://huggingface.co/openbmb/MiniCPM-V-2_6)
 and [microsoft/florence2](https://huggingface.co/collections/microsoft/florence-6669f44df0d87d9c3bfb76de).
 Without their works(👏👏), this repo won't exist.
+
+## Prompt Refinement
+
+Use `prompt_refiner.py` to generate an image from a prompt, caption it, and append missing words to improve the prompt.
+
+```bash
+python prompt_refiner.py "a girl in a city" --sd_model stabilityai/stable-diffusion-2-1-base
+```
+
