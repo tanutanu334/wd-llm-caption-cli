@@ -24,9 +24,14 @@ GUI support Joy formated prompt inputs (Only for Joy-Caption Alpha Two, Joy-Capt
 
 =======
 
+2024.10.27: Add Joy Caption Beta One Llava Support.
+
+=======
+
 2025.6.8: Add Joy Caption Beta One Llava Support.
 =======
 2024.10.27: Add Joy Caption Beta One Llava Support.
+
 
 
 
@@ -563,4 +568,13 @@ Use `prompt_refiner.py` to generate an image from a prompt, caption it, and appe
 ```bash
 python prompt_refiner.py "a girl in a city" --sd_model stabilityai/stable-diffusion-2-1-base
 ```
+
+
+You can also launch a simple GUI:
+
+```bash
+python prompt_refiner_gui.py
+```
+
+=======
 

@@ -5,6 +5,10 @@
 3. Add option to save WD tags and LLM Captions in one file.(Only support CLI mode or GUI batch mode.)
 4. Add Joy Caption Beta One Llava Support.
 
+5. Add simple GUI for prompt refinement.
+=======
+
+
 ### CHANGE
 
 1. Upgrade some dependencies version.

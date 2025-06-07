@@ -92,3 +92,4 @@ Issues = "https://github.com/fireicewolf/wd-llm-caption-cli/issues"
 [project.scripts]
 wd-llm-caption = "wd_llm_caption.caption:main"
 wd-llm-caption-gui = "wd_llm_caption.gui:gui"
+prompt-refiner-gui = "prompt_refiner_gui:gui"
