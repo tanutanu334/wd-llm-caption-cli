@@ -41,6 +41,48 @@
       }
     }
   },
+  "Joy-Caption-Beta-One-Llava": {
+    "huggingface": {
+      "llm": {
+        "repo_id": "fancyfeast/llama-joycaption-beta-one-hf-llava",
+        "revision": "main",
+        "repo_type": "model",
+        "subfolder": "",
+        "file_list": {
+          "config.json": "https://huggingface.co/fancyfeast/llama-joycaption-beta-one-hf-llava/resolve/main/config.json",
+          "generation_config.json": "https://huggingface.co/fancyfeast/llama-joycaption-beta-one-hf-llava/resolve/main/generation_config.json",
+          "tokenizer.json": "https://huggingface.co/fancyfeast/llama-joycaption-beta-one-hf-llava/resolve/main/tokenizer.json",
+          "tokenizer_config.json": "https://huggingface.co/fancyfeast/llama-joycaption-beta-one-hf-llava/resolve/main/tokenizer_config.json",
+          "special_tokens_map.json": "https://huggingface.co/fancyfeast/llama-joycaption-beta-one-hf-llava/resolve/main/special_tokens_map.json",
+          "model.safetensors.index.json": "https://huggingface.co/fancyfeast/llama-joycaption-beta-one-hf-llava/resolve/main/model.safetensors.index.json",
+          "model-00001-of-00004.safetensors": "https://huggingface.co/fancyfeast/llama-joycaption-beta-one-hf-llava/resolve/main/model-00001-of-00004.safetensors",
+          "model-00002-of-00004.safetensors": "https://huggingface.co/fancyfeast/llama-joycaption-beta-one-hf-llava/resolve/main/model-00002-of-00004.safetensors",
+          "model-00003-of-00004.safetensors": "https://huggingface.co/fancyfeast/llama-joycaption-beta-one-hf-llava/resolve/main/model-00003-of-00004.safetensors",
+          "model-00004-of-00004.safetensors": "https://huggingface.co/fancyfeast/llama-joycaption-beta-one-hf-llava/resolve/main/model-00004-of-00004.safetensors"
+        }
+      }
+    },
+    "modelscope": {
+      "llm": {
+        "repo_id": "fireicewolf/llama-joycaption-beta-one-hf-llava",
+        "revision": "master",
+        "repo_type": "model",
+        "subfolder": "",
+        "file_list": {
+          "config.json": "https://www.modelscope.cn/models/fireicewolf/llama-joycaption-beta-one-hf-llava/resolve/master/config.json",
+          "generation_config.json": "https://www.modelscope.cn/models/fireicewolf/llama-joycaption-beta-one-hf-llava/resolve/master/generation_config.json",
+          "tokenizer.json": "https://www.modelscope.cn/models/fireicewolf/llama-joycaption-beta-one-hf-llava/resolve/master/tokenizer.json",
+          "tokenizer_config.json": "https://www.modelscope.cn/models/fireicewolf/llama-joycaption-beta-one-hf-llava/resolve/master/tokenizer_config.json",
+          "special_tokens_map.json": "https://www.modelscope.cn/models/fireicewolf/llama-joycaption-beta-one-hf-llava/resolve/master/special_tokens_map.json",
+          "model.safetensors.index.json": "https://www.modelscope.cn/models/fireicewolf/llama-joycaption-beta-one-hf-llava/resolve/master/model.safetensors.index.json",
+          "model-00001-of-00004.safetensors": "https://www.modelscope.cn/models/fireicewolf/llama-joycaption-beta-one-hf-llava/resolve/master/model-00001-of-00004.safetensors",
+          "model-00002-of-00004.safetensors": "https://www.modelscope.cn/models/fireicewolf/llama-joycaption-beta-one-hf-llava/resolve/master/model-00002-of-00004.safetensors",
+          "model-00003-of-00004.safetensors": "https://www.modelscope.cn/models/fireicewolf/llama-joycaption-beta-one-hf-llava/resolve/master/model-00003-of-00004.safetensors",
+          "model-00004-of-00004.safetensors": "https://www.modelscope.cn/models/fireicewolf/llama-joycaption-beta-one-hf-llava/resolve/master/model-00004-of-00004.safetensors"
+        }
+      }
+    }
+  },
   "Joy-Caption-Alpha-Two": {
     "huggingface": {
       "image_adapter": {

@@ -70,6 +70,7 @@ dependencies = [
     "pillow>=10.4.0",
     "requests==2.32.3",
     "tqdm==4.66.5",
+    "diffusers==0.27.2",
     "accelerate>=0.34.2",
     "bitsandbytes>=0.42.0",
 #    "peft==0.13.2",
@@ -91,3 +92,4 @@ Issues = "https://github.com/fireicewolf/wd-llm-caption-cli/issues"
 [project.scripts]
 wd-llm-caption = "wd_llm_caption.caption:main"
 wd-llm-caption-gui = "wd_llm_caption.gui:gui"
+prompt-refiner-gui = "prompt_refiner_gui:gui"
