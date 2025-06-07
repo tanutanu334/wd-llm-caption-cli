@@ -298,7 +298,7 @@ def gui():
                 visible=True if llm_choice_radio == "Joy" and joy_models_dropdown != "Joy-Caption-Pre-Alpha" else False)
             extra_options_visible = gr.update(
                 visible=True if llm_choice_radio == "Joy" and joy_models_dropdown in ["Joy-Caption-Alpha-Two-Llava",
-                                                                                      "Joy-Caption-Alpha-Two"] else False)
+                                                                                      "Joy-Caption-Alpha-Two", "Joy-Caption-Beta-One-Llava"] else False)
             return joy_formated_prompts_visible, extra_options_visible
 
         caption_method.change(fn=caption_method_update_visibility, inputs=caption_method,
@@ -412,7 +412,7 @@ def gui():
 
             prompt_str = prompt_str + caption_type_map[caption_type_value][map_idx]
             # Add extra options
-            if joy_models_value in ["Joy-Caption-Alpha-Two-Llava", "Joy-Caption-Alpha-Two"] and \
+            if joy_models_value in ["Joy-Caption-Alpha-Two-Llava", "Joy-Caption-Alpha-Two", "Joy-Caption-Beta-One-Llava"] and \
                     len(extra_options_value) > 0:
                 prompt_str += " " + " ".join(extra_options_value)
             # Add name, length, word_count
