@@ -934,7 +934,7 @@ class LLM:
             self.logger.info(f'Unloading LLM...')
             start = time.monotonic()
             del self.llm
-            if hasattr(self, "llm_processer"):
+            if hasattr(self, "llm_processor"):
                 del self.llm_processor
             if hasattr(self, "llm_tokenizer"):
                 del self.llm_tokenizer
