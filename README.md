@@ -19,7 +19,22 @@ This tool can make a caption with danbooru style tags or a nature language descr
 2024.10.18: Add Joy Caption Alpha One, Joy-Caption Alpha Two, Joy-Caption Alpha Two Llava Support.
 GUI support Joy formated prompt inputs (Only for Joy-Caption Alpha Two, Joy-Caption Alpha Two Llava).
 
+
 2024.10.27: Add Joy Caption Beta One Llava Support.
+
+=======
+
+2024.10.27: Add Joy Caption Beta One Llava Support.
+
+=======
+
+2025.6.8: Add Joy Caption Beta One Llava Support.
+=======
+2024.10.27: Add Joy Caption Beta One Llava Support.
+
+
+
+
 
 2024.10.13: Add Florence2 Support.  
 Now LLM will use own default generate params while `--llm_temperature` and `--llm_max_tokens` are 0.
@@ -554,9 +569,12 @@ Use `prompt_refiner.py` to generate an image from a prompt, caption it, and appe
 python prompt_refiner.py "a girl in a city" --sd_model stabilityai/stable-diffusion-2-1-base
 ```
 
+
 You can also launch a simple GUI:
 
 ```bash
 python prompt_refiner_gui.py
 ```
+
+=======
 

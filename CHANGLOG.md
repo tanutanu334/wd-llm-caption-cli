@@ -4,7 +4,10 @@
 2. GUI support Joy formated prompt inputs (Only for Joy-Caption Alpha Two, Joy-Caption Alpha Two Llava).
 3. Add option to save WD tags and LLM Captions in one file.(Only support CLI mode or GUI batch mode.)
 4. Add Joy Caption Beta One Llava Support.
+
 5. Add simple GUI for prompt refinement.
+=======
+
 
 ### CHANGE
 
