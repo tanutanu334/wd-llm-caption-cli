@@ -521,6 +521,15 @@ Enable quantization for joy llm [`none`,`4bit`, `8bit`]. default is `none`.
 
 extension of caption file, default is `.llmcaption`
 
+
+## Prompt Refinement
+
+Use `prompt_refiner.py` to generate an image from a prompt, caption it, and append missing words to improve the prompt.
+
+```bash
+python prompt_refiner.py "a girl in a city" --sd_model stabilityai/stable-diffusion-2-1-base
+```
+
 `--llm_read_wd_caption`
 
 llm will read wd caption for inference. Only effect when `caption_method` is `llm`
