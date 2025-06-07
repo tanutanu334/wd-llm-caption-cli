@@ -236,7 +236,7 @@ def download_models(
         return wd_model_path, wd_tags_csv_path
 
     elif models_type == "joy":
-        if args.llm_model_name == "Joy-Caption-Alpha-Two-Llava":
+        if args.llm_model_name in ["Joy-Caption-Alpha-Two-Llava", "Joy-Caption-Beta-One-Llava"]:
             return Path(os.path.dirname(models_path[0])),
         elif args.llm_patch:
             image_adapter_path = Path(os.path.dirname(models_path[0]))
