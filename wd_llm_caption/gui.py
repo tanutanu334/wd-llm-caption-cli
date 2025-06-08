@@ -75,7 +75,7 @@ def gui():
                 #                             choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
                 #                             value="INFO")
 
-                with gr.Row(equal_height=True) as models_settings:
+                with gr.Row(equal_height=True):
                     with gr.Column(min_width=240):
                         with gr.Column(min_width=240):
                             caption_method = gr.Radio(label="Caption method", choices=["WD+LLM", "WD", "LLM"],
@@ -231,7 +231,7 @@ def gui():
                         llm_caption_output = gr.Text(label='LLM Caption Output', lines=10,
                                                      interactive=False, show_label=True, show_copy_button=True)
 
-                with gr.Tab("Batch mode") as bs_mode:
+                with gr.Tab("Batch mode"):
                     with gr.Column(min_width=240):
                         with gr.Row():
                             input_dir = gr.Textbox(label="Batch Directory",
@@ -715,7 +715,9 @@ def gui():
                     user_prompt=str(args.llm_user_prompt).format(wd_tags=tag_text) if tag_text else \
                         str(args.llm_user_prompt),
                     temperature=args.llm_temperature,
-                    max_new_tokens=args.llm_max_tokens
+                    max_new_tokens=args.llm_max_tokens,
+                    top_k=args.llm_top_k,
+                    top_p=args.llm_top_p,
                 )
                 get_caption_fn.my_logger.info(f"LLM Caption content: {caption_text}")
             gr.Info(f"Inference end in {time.monotonic() - start_time:.1f}s.")
@@ -818,7 +820,7 @@ def gui():
         def caption_unload_models():
             global IS_MODEL_LOAD
             if IS_MODEL_LOAD:
-                get_caption_args, get_caption_fn = ARGS, CAPTION_FN
+                _, get_caption_fn = ARGS, CAPTION_FN
                 get_caption_fn.unload_models()
 
                 IS_MODEL_LOAD = False
