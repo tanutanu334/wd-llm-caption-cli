@@ -11,6 +11,7 @@ from PIL import Image
 
 from .logger import Logger
 
+
 SUPPORT_IMAGE_FORMATS = ("bmp", "jpg", "jpeg", "png", "webp")
 
 

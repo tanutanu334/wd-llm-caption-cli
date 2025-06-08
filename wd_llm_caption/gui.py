@@ -10,6 +10,7 @@ from . import caption
 from .utils import inference
 from .utils.logger import print_title
 
+
 WD_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_wd.json")
 JOY_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_joy.json")
 LLAMA_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_llama_3.2V.json")
@@ -210,6 +211,10 @@ def gui():
                                                         minimum=0, maximum=1.0, value=0, step=0.1)
                             llm_max_tokens = gr.Slider(label="max token for LLM model",
                                                        minimum=0, maximum=2048, value=0, step=1)
+                            llm_top_k = gr.Slider(label="top-k for LLM model",
+                                                 minimum=0, maximum=200, value=0, step=1)
+                            llm_top_p = gr.Slider(label="top-p for LLM model",
+                                                 minimum=0, maximum=1.0, value=0, step=0.05)
                             image_size = gr.Slider(label="Resize image for inference",
                                                    minimum=256, maximum=2048, value=1024, step=1)
                             auto_unload = gr.Checkbox(label="Auto Unload Models after inference.")
@@ -510,6 +515,8 @@ def gui():
                                        llm_user_prompt,
                                        llm_temperature,
                                        llm_max_tokens,
+                                       llm_top_k,
+                                       llm_top_p,
                                        image_size,
                                        auto_unload,
                                        input_image]
@@ -536,6 +543,8 @@ def gui():
                                       llm_user_prompt,
                                       llm_temperature,
                                       llm_max_tokens,
+                                      llm_top_k,
+                                      llm_top_p,
                                       image_size,
                                       auto_unload,
                                       input_dir,
@@ -653,6 +662,8 @@ def gui():
                                      llm_user_prompt_value,
                                      llm_temperature_value,
                                      llm_max_tokens_value,
+                                     llm_top_k_value,
+                                     llm_top_p_value,
                                      image_size_value,
                                      auto_unload_value,
                                      input_image_value):
@@ -681,6 +692,8 @@ def gui():
             args.llm_user_prompt = str(llm_user_prompt_value)
             args.llm_temperature = float(llm_temperature_value)
             args.llm_max_tokens = int(llm_max_tokens_value)
+            args.llm_top_k = int(llm_top_k_value) if int(llm_top_k_value) != 0 else None
+            args.llm_top_p = float(llm_top_p_value) if float(llm_top_p_value) != 0 else None
 
             args.image_size = int(image_size_value)
 
@@ -748,6 +761,8 @@ def gui():
                                     llm_user_prompt_value,
                                     llm_temperature_value,
                                     llm_max_tokens_value,
+                                    llm_top_k_value,
+                                    llm_top_p_value,
                                     image_size_value,
                                     auto_unload_value,
                                     input_dir_value,
@@ -789,6 +804,8 @@ def gui():
                 args.llm_user_prompt = str(llm_user_prompt_value)
                 args.llm_temperature = float(llm_temperature_value)
                 args.llm_max_tokens = int(llm_max_tokens_value)
+                args.llm_top_k = int(llm_top_k_value) if int(llm_top_k_value) != 0 else None
+                args.llm_top_p = float(llm_top_p_value) if float(llm_top_p_value) != 0 else None
 
                 args.image_size = int(image_size_value)
 
