@@ -9,9 +9,16 @@ from tqdm import tqdm
 
 from .utils.download import download_models
 from .utils.image import get_image_paths
-from .utils.inference import DEFAULT_SYSTEM_PROMPT, DEFAULT_USER_PROMPT_WITHOUT_WD, DEFAULT_USER_PROMPT_WITH_WD
-from .utils.inference import get_caption_file_path, LLM, Tagger
+from .utils.inference import (
+    DEFAULT_SYSTEM_PROMPT,
+    DEFAULT_USER_PROMPT_WITH_WD,
+    DEFAULT_USER_PROMPT_WITHOUT_WD,
+    LLM,
+    Tagger,
+    get_caption_file_path,
+)
 from .utils.logger import Logger, print_title
+
 
 DEFAULT_MODELS_SAVE_PATH = str(os.path.join(os.getcwd(), "models"))
 
@@ -40,7 +47,7 @@ class Caption:
             args: argparse.Namespace
     ):
         if not args.data_path:
-            print(f"`data_path` not defined, use `--data_path` add your datasets path!!!")
+            print("`data_path` not defined, use `--data_path` add your datasets path!!!")
             raise ValueError
         if not os.path.exists(args.data_path):
             print(f"`{args.data_path}` not exists!!!")
@@ -261,11 +268,11 @@ class Caption:
             # Set joy user prompt
             if args.llm_user_prompt == DEFAULT_USER_PROMPT_WITHOUT_WD:
                 if not args.llm_caption_without_wd:
-                    self.my_logger.warning(f"LLM user prompt not defined, using default version with wd tags...")
+                    self.my_logger.warning("LLM user prompt not defined, using default version with wd tags...")
                     args.llm_user_prompt = DEFAULT_USER_PROMPT_WITH_WD
             # run
             if args.run_method == "sync":
-                self.my_logger.info(f"Running in sync mode...")
+                self.my_logger.info("Running in sync mode...")
                 image_paths = get_image_paths(logger=self.my_logger, path=Path(args.data_path),
                                               recursive=args.recursive)
                 pbar = tqdm(total=len(image_paths), smoothing=0.0)
@@ -328,7 +335,9 @@ class Caption:
                                 system_prompt=str(args.llm_system_prompt),
                                 user_prompt=str(args.llm_user_prompt).format(wd_tags=tag_text),
                                 temperature=args.llm_temperature,
-                                max_new_tokens=args.llm_max_tokens
+                                max_new_tokens=args.llm_max_tokens,
+                                top_k=args.llm_top_k,
+                                top_p=args.llm_top_p,
                             )
                             if not (args.not_overwrite and os.path.isfile(llm_caption_file)):
                                 # Write LLM Caption
@@ -393,7 +402,7 @@ class Caption:
                     for tag, freq in sorted_tags:
                         self.my_logger.info(f'{tag}: {freq}')
             else:
-                self.my_logger.info(f"Running in queue mode...")
+                self.my_logger.info("Running in queue mode...")
                 pbar = tqdm(total=2, smoothing=0.0)
                 pbar.set_description('Processing with WD model...')
                 self.my_tagger.inference()
@@ -751,6 +760,16 @@ def setup_args() -> argparse.Namespace:
         type=int,
         default=0,
         help='max tokens for LLM model output, default is `0`, means use llm own default value.'
+    )
+    llm_args.add_argument(
+        '--llm_top_k',
+        type=int,
+        help='top-k sampling for LLM model, default use model setting.'
+    )
+    llm_args.add_argument(
+        '--llm_top_p',
+        type=float,
+        help='top-p sampling for LLM model, default use model setting.'
     )
 
     gradio_args = args.add_argument_group("Gradio dummy args, no effects")

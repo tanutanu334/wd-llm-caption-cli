@@ -9,8 +9,9 @@ import numpy
 from PIL import Image
 from tqdm import tqdm
 
-from .image import image_process, image_process_gbr, image_process_image, get_image_paths
+from .image import get_image_paths, image_process, image_process_gbr, image_process_image
 from .logger import Logger
+
 
 kaomojis = [
     "0_0",
@@ -147,7 +148,7 @@ class LLM:
         try:
             import torch
             if not self.args.llm_use_cpu:
-                self.logger.debug(f'Will empty cuda device cache...')
+                self.logger.debug('Will empty cuda device cache...')
                 torch.cuda.empty_cache()
             if self.models_type == "joy":
                 from torch import nn
@@ -158,8 +159,13 @@ class LLM:
         try:
             from transformers import AutoProcessor, AutoTokenizer, BitsAndBytesConfig
             if self.models_type in ["joy", "florence"]:
-                from transformers import (AutoModel, AutoModelForCausalLM, LlavaForConditionalGeneration,
-                                          PreTrainedTokenizer, PreTrainedTokenizerFast)
+                from transformers import (
+                    AutoModel,
+                    AutoModelForCausalLM,
+                    LlavaForConditionalGeneration,
+                    PreTrainedTokenizer,
+                    PreTrainedTokenizerFast,
+                )
             elif self.models_type == "llama":
                 from transformers import MllamaForConditionalGeneration
                 # from peft import PeftConfig, PeftModel
@@ -181,7 +187,7 @@ class LLM:
             self.clip_model = self.clip_model.vision_model
 
             if self.args.llm_model_name != "Joy-Caption-Pre-Alpha":
-                self.logger.info(f"Loading custom LLM vision model...")
+                self.logger.info("Loading custom LLM vision model...")
                 checkpoint = torch.load(os.path.join(self.image_adapter_path, "clip_model.pt"), map_location='cpu')
                 checkpoint = {k.replace("_orig_mod.module.", ""): v for k, v in checkpoint.items()}
                 self.clip_model.load_state_dict(checkpoint)
@@ -224,11 +230,11 @@ class LLM:
                                                 if self.models_type == "minicpm" else None,
                                             bnb_4bit_compute_dtype=llm_dtype,
                                             bnb_4bit_use_double_quant=True)
-            self.logger.info(f'LLM 4bit quantization: Enabled')
+            self.logger.info('LLM 4bit quantization: Enabled')
         elif self.args.llm_qnt == "8bit":
             qnt_config = BitsAndBytesConfig(load_in_8bit=True,
                                             llm_int8_enable_fp32_cpu_offload=True)
-            self.logger.info(f'LLM 8bit quantization: Enabled')
+            self.logger.info('LLM 8bit quantization: Enabled')
         else:
             qnt_config = None
 
@@ -452,6 +458,8 @@ class LLM:
             user_prompt: str,
             temperature: float = 0,
             max_new_tokens: int = 0,
+            top_k: int | None = None,
+            top_p: float | None = None,
     ) -> str:
         # Import torch
         try:
@@ -466,7 +474,7 @@ class LLM:
             device = "cpu" if self.args.llm_use_cpu else "cuda"
             # Cleaning VRAM cache
             if not self.args.llm_use_cpu:
-                self.logger.debug(f'Will empty cuda device cache...')
+                self.logger.debug('Will empty cuda device cache...')
                 torch.cuda.empty_cache()
 
             if self.models_type == "joy":
@@ -540,13 +548,20 @@ class LLM:
                         self.logger.warning(f'LLM max_new_tokens not set, using default value {max_new_tokens}')
                     else:
                         self.logger.debug(f'LLM max_new_tokens is {max_new_tokens}')
-                    generate_ids = self.llm.generate(input_ids,
-                                                     inputs_embeds=inputs_embeds,
-                                                     attention_mask=attention_mask,
-                                                     max_new_tokens=max_new_tokens,
-                                                     do_sample=True, top_k=10,
-                                                     temperature=temperature,
-                                                     suppress_tokens=None)
+                    top_k_val = 10 if top_k is None else top_k
+                    gen_kwargs = {
+                        "input_ids": input_ids,
+                        "inputs_embeds": inputs_embeds,
+                        "attention_mask": attention_mask,
+                        "max_new_tokens": max_new_tokens,
+                        "do_sample": True,
+                        "top_k": top_k_val,
+                        "temperature": temperature,
+                        "suppress_tokens": None,
+                    }
+                    if top_p is not None:
+                        gen_kwargs["top_p"] = top_p
+                    generate_ids = self.llm.generate(**gen_kwargs)
                     # Trim off the prompt
                     generate_ids = generate_ids[:, input_ids.shape[1]:]
                     if generate_ids[0][-1] == self.llm_tokenizer.eos_token_id:
@@ -673,11 +688,20 @@ class LLM:
 
                         # generate_ids = text_model.generate(input_ids, inputs_embeds=inputs_embeds, attention_mask=attention_mask, max_new_tokens=300, do_sample=False, suppress_tokens=None)
                         # generate_ids = text_model.generate(input_ids, inputs_embeds=inputs_embeds, attention_mask=attention_mask, max_new_tokens=300, do_sample=True, top_k=10, temperature=0.5, suppress_tokens=None)
-                        generate_ids = self.llm.generate(input_ids, inputs_embeds=input_embeds,
-                                                         attention_mask=attention_mask,
-                                                         temperature=temperature, max_new_tokens=max_new_tokens,
-                                                         do_sample=True,
-                                                         suppress_tokens=None)  # Uses the default which is temp=0.6, top_p=0.9
+                        gen_kwargs = {
+                            "input_ids": input_ids,
+                            "inputs_embeds": input_embeds,
+                            "attention_mask": attention_mask,
+                            "temperature": temperature,
+                            "max_new_tokens": max_new_tokens,
+                            "do_sample": True,
+                            "suppress_tokens": None,
+                        }
+                        if top_k is not None:
+                            gen_kwargs["top_k"] = top_k
+                        if top_p is not None:
+                            gen_kwargs["top_p"] = top_p
+                        generate_ids = self.llm.generate(**gen_kwargs)  # Uses the default which is temp=0.6, top_p=0.9
 
                         # Trim off the prompt
                         generate_ids = generate_ids[:, input_ids.shape[1]:]
@@ -705,8 +729,12 @@ class LLM:
                         params = {
                             'num_beams': 3,
                             'repetition_penalty': 1.2,
-                            "max_new_tokens": max_new_tokens
+                            "max_new_tokens": max_new_tokens,
                         }
+                        if top_p is not None:
+                            params['top_p'] = top_p
+                        if top_k is not None:
+                            params['top_k'] = top_k
                     else:
                         if temperature == 0:
                             temperature = 0.7
@@ -719,19 +747,25 @@ class LLM:
                         else:
                             self.logger.debug(f'LLM max_new_tokens is {max_new_tokens}')
                         params = {
-                            'top_p': 0.8,
-                            'top_k': 100,
                             'temperature': temperature,
                             'repetition_penalty': 1.05,
-                            "max_new_tokens": max_new_tokens
+                            "max_new_tokens": max_new_tokens,
                         }
+                        if top_p is not None:
+                            params['top_p'] = top_p
+                        else:
+                            params['top_p'] = 0.8
+                        if top_k is not None:
+                            params['top_k'] = top_k
+                        else:
+                            params['top_k'] = 100
                     params["max_inp_length"] = 4352
                     content = self.llm.chat(image=image, msgs=messages, tokenizer=self.llm_tokenizer,
                                             system_prompt=system_prompt if system_prompt else None,
                                             sampling=False, stream=False, **params)
                 elif self.models_type == "florence":
-                    self.logger.warning(f"Florence models don't support system prompt or user prompt!")
-                    self.logger.warning(f"Florence models don't support temperature or max tokens!")
+                    self.logger.warning("Florence models don't support system prompt or user prompt!")
+                    self.logger.warning("Florence models don't support temperature or max tokens!")
 
                     def run_inference(task_prompt, text_input=None):
                         if text_input is None:
@@ -800,9 +834,14 @@ class LLM:
                             self.logger.debug(f'LLM max_new_tokens is {max_new_tokens}')
                         params = {
                             'do_sample': True,
-                            'top_k': 10,
                             'temperature': temperature,
                         }
+                        if top_k is not None:
+                            params['top_k'] = top_k
+                        else:
+                            params['top_k'] = 10
+                        if top_p is not None:
+                            params['top_p'] = top_p
 
                     output = self.llm.generate(**inputs, max_new_tokens=max_new_tokens, **params)
                     content = self.llm_processor.decode(output[0][inputs["input_ids"].shape[-1]:],
@@ -868,7 +907,9 @@ class LLM:
                     system_prompt=system_prompt,
                     user_prompt=user_prompt,
                     temperature=self.args.llm_temperature,
-                    max_new_tokens=self.args.llm_max_tokens
+                    max_new_tokens=self.args.llm_max_tokens,
+                    top_k=self.args.llm_top_k,
+                    top_p=self.args.llm_top_p,
                 )
                 if not (self.args.not_overwrite and os.path.isfile(llm_caption_file)):
                     with open(llm_caption_file, "wt", encoding="utf-8") as f:
@@ -924,14 +965,14 @@ class LLM:
         # Unload Image Adapter
         if self.models_type == "joy":
             if hasattr(self, "image_adapter"):
-                self.logger.info(f'Unloading Image Adapter...')
+                self.logger.info('Unloading Image Adapter...')
                 start = time.monotonic()
                 del self.image_adapter
                 self.logger.info(f'Image Adapter unloaded in {time.monotonic() - start:.1f}s.')
                 image_adapter_unloaded = True
         # Unload LLM
         if hasattr(self, "llm"):
-            self.logger.info(f'Unloading LLM...')
+            self.logger.info('Unloading LLM...')
             start = time.monotonic()
             del self.llm
             if hasattr(self, "llm_processor"):
@@ -943,7 +984,7 @@ class LLM:
         # Unload CLIP
         if self.models_type == "joy":
             if hasattr(self, "clip_model"):
-                self.logger.info(f'Unloading CLIP...')
+                self.logger.info('Unloading CLIP...')
                 start = time.monotonic()
                 del self.clip_model
                 del self.clip_processor
@@ -952,7 +993,7 @@ class LLM:
         try:
             import torch
             if not self.args.llm_use_cpu:
-                self.logger.debug(f'Will empty cuda device cache...')
+                self.logger.debug('Will empty cuda device cache...')
                 torch.cuda.empty_cache()
         except ImportError as ie:
             self.logger.error(f'Import torch Failed!\nDetails: {ie}')
@@ -988,7 +1029,6 @@ class Tagger:
             raise FileNotFoundError
         # Import ONNX
         try:
-            import onnx
             import onnxruntime as ort
         except ImportError as ie:
             self.logger.error(f'Import ONNX Failed!\nDetails: {ie}')
@@ -1043,7 +1083,7 @@ class Tagger:
         self.logger.debug(f'Loading tags from {tags_csv_path}')
         with open(tags_csv_path, 'r', encoding='utf-8') as csv_file:
             csv_content = csv.reader(csv_file)
-            rows = [row for row in csv_content]
+            rows = list(csv_content)
             header = rows[0]
             rows = rows[1:]
 
@@ -1120,7 +1160,7 @@ class Tagger:
         caption_separator = self.args.wd_caption_separator
         stripped_caption_separator = caption_separator.strip()
         undesired_tags = self.args.wd_undesired_tags.split(stripped_caption_separator)
-        undesired_tags = set([tag.strip() for tag in undesired_tags if tag.strip() != ""])
+        undesired_tags = {tag.strip() for tag in undesired_tags if tag.strip() != ""}
 
         always_first_tags = [tag for tag in self.args.wd_always_first_tags.split(stripped_caption_separator)
                              if tag.strip() != ""] if self.args.wd_always_first_tags else None

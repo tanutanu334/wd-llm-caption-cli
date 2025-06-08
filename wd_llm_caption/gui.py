@@ -10,6 +10,7 @@ from . import caption
 from .utils import inference
 from .utils.logger import print_title
 
+
 WD_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_wd.json")
 JOY_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_joy.json")
 LLAMA_CONFIG = os.path.join(os.path.dirname(__file__), "configs", "default_llama_3.2V.json")
@@ -75,7 +76,7 @@ def gui():
                 #                             choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
                 #                             value="INFO")
 
-                with gr.Row(equal_height=True) as models_settings:
+                with gr.Row(equal_height=True):
                     with gr.Column(min_width=240):
                         with gr.Column(min_width=240):
                             caption_method = gr.Radio(label="Caption method", choices=["WD+LLM", "WD", "LLM"],
@@ -210,6 +211,10 @@ def gui():
                                                         minimum=0, maximum=1.0, value=0, step=0.1)
                             llm_max_tokens = gr.Slider(label="max token for LLM model",
                                                        minimum=0, maximum=2048, value=0, step=1)
+                            llm_top_k = gr.Slider(label="top-k for LLM model",
+                                                 minimum=0, maximum=200, value=0, step=1)
+                            llm_top_p = gr.Slider(label="top-p for LLM model",
+                                                 minimum=0, maximum=1.0, value=0, step=0.05)
                             image_size = gr.Slider(label="Resize image for inference",
                                                    minimum=256, maximum=2048, value=1024, step=1)
                             auto_unload = gr.Checkbox(label="Auto Unload Models after inference.")
@@ -231,7 +236,7 @@ def gui():
                         llm_caption_output = gr.Text(label='LLM Caption Output', lines=10,
                                                      interactive=False, show_label=True, show_copy_button=True)
 
-                with gr.Tab("Batch mode") as bs_mode:
+                with gr.Tab("Batch mode"):
                     with gr.Column(min_width=240):
                         with gr.Row():
                             input_dir = gr.Textbox(label="Batch Directory",
@@ -510,6 +515,8 @@ def gui():
                                        llm_user_prompt,
                                        llm_temperature,
                                        llm_max_tokens,
+                                       llm_top_k,
+                                       llm_top_p,
                                        image_size,
                                        auto_unload,
                                        input_image]
@@ -536,6 +543,8 @@ def gui():
                                       llm_user_prompt,
                                       llm_temperature,
                                       llm_max_tokens,
+                                      llm_top_k,
+                                      llm_top_p,
                                       image_size,
                                       auto_unload,
                                       input_dir,
@@ -653,6 +662,8 @@ def gui():
                                      llm_user_prompt_value,
                                      llm_temperature_value,
                                      llm_max_tokens_value,
+                                     llm_top_k_value,
+                                     llm_top_p_value,
                                      image_size_value,
                                      auto_unload_value,
                                      input_image_value):
@@ -681,6 +692,8 @@ def gui():
             args.llm_user_prompt = str(llm_user_prompt_value)
             args.llm_temperature = float(llm_temperature_value)
             args.llm_max_tokens = int(llm_max_tokens_value)
+            args.llm_top_k = int(llm_top_k_value) if int(llm_top_k_value) != 0 else None
+            args.llm_top_p = float(llm_top_p_value) if float(llm_top_p_value) != 0 else None
 
             args.image_size = int(image_size_value)
 
@@ -715,7 +728,9 @@ def gui():
                     user_prompt=str(args.llm_user_prompt).format(wd_tags=tag_text) if tag_text else \
                         str(args.llm_user_prompt),
                     temperature=args.llm_temperature,
-                    max_new_tokens=args.llm_max_tokens
+                    max_new_tokens=args.llm_max_tokens,
+                    top_k=args.llm_top_k,
+                    top_p=args.llm_top_p,
                 )
                 get_caption_fn.my_logger.info(f"LLM Caption content: {caption_text}")
             gr.Info(f"Inference end in {time.monotonic() - start_time:.1f}s.")
@@ -746,6 +761,8 @@ def gui():
                                     llm_user_prompt_value,
                                     llm_temperature_value,
                                     llm_max_tokens_value,
+                                    llm_top_k_value,
+                                    llm_top_p_value,
                                     image_size_value,
                                     auto_unload_value,
                                     input_dir_value,
@@ -787,6 +804,8 @@ def gui():
                 args.llm_user_prompt = str(llm_user_prompt_value)
                 args.llm_temperature = float(llm_temperature_value)
                 args.llm_max_tokens = int(llm_max_tokens_value)
+                args.llm_top_k = int(llm_top_k_value) if int(llm_top_k_value) != 0 else None
+                args.llm_top_p = float(llm_top_p_value) if float(llm_top_p_value) != 0 else None
 
                 args.image_size = int(image_size_value)
 
@@ -818,7 +837,7 @@ def gui():
         def caption_unload_models():
             global IS_MODEL_LOAD
             if IS_MODEL_LOAD:
-                get_caption_args, get_caption_fn = ARGS, CAPTION_FN
+                _, get_caption_fn = ARGS, CAPTION_FN
                 get_caption_fn.unload_models()
 
                 IS_MODEL_LOAD = False
