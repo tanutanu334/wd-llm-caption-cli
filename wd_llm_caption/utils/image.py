@@ -21,9 +21,10 @@ def get_image_paths(
 ) -> List[str]:
     # Get image paths
     path_to_find = os.path.join(path, '**') if recursive else os.path.join(path, '*')
-    image_paths = sorted(set(
-        [image for image in glob.glob(path_to_find, recursive=recursive)
-         if image.lower().endswith(SUPPORT_IMAGE_FORMATS)]), key=lambda filename: (os.path.splitext(filename)[0])
+    image_paths = sorted(
+        {image for image in glob.glob(path_to_find, recursive=recursive)
+         if image.lower().endswith(SUPPORT_IMAGE_FORMATS)},
+        key=lambda filename: os.path.splitext(filename)[0],
     ) if not os.path.isfile(path) else [str(path)] \
         if str(path).lower().endswith(SUPPORT_IMAGE_FORMATS) else None
 

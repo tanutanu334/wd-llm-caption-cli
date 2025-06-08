@@ -452,6 +452,8 @@ class LLM:
             user_prompt: str,
             temperature: float = 0,
             max_new_tokens: int = 0,
+            top_k: int | None = None,
+            top_p: float | None = None,
     ) -> str:
         # Import torch
         try:
@@ -540,13 +542,20 @@ class LLM:
                         self.logger.warning(f'LLM max_new_tokens not set, using default value {max_new_tokens}')
                     else:
                         self.logger.debug(f'LLM max_new_tokens is {max_new_tokens}')
-                    generate_ids = self.llm.generate(input_ids,
-                                                     inputs_embeds=inputs_embeds,
-                                                     attention_mask=attention_mask,
-                                                     max_new_tokens=max_new_tokens,
-                                                     do_sample=True, top_k=10,
-                                                     temperature=temperature,
-                                                     suppress_tokens=None)
+                    top_k_val = 10 if top_k is None else top_k
+                    gen_kwargs = {
+                        "input_ids": input_ids,
+                        "inputs_embeds": inputs_embeds,
+                        "attention_mask": attention_mask,
+                        "max_new_tokens": max_new_tokens,
+                        "do_sample": True,
+                        "top_k": top_k_val,
+                        "temperature": temperature,
+                        "suppress_tokens": None,
+                    }
+                    if top_p is not None:
+                        gen_kwargs["top_p"] = top_p
+                    generate_ids = self.llm.generate(**gen_kwargs)
                     # Trim off the prompt
                     generate_ids = generate_ids[:, input_ids.shape[1]:]
                     if generate_ids[0][-1] == self.llm_tokenizer.eos_token_id:
@@ -673,11 +682,20 @@ class LLM:
 
                         # generate_ids = text_model.generate(input_ids, inputs_embeds=inputs_embeds, attention_mask=attention_mask, max_new_tokens=300, do_sample=False, suppress_tokens=None)
                         # generate_ids = text_model.generate(input_ids, inputs_embeds=inputs_embeds, attention_mask=attention_mask, max_new_tokens=300, do_sample=True, top_k=10, temperature=0.5, suppress_tokens=None)
-                        generate_ids = self.llm.generate(input_ids, inputs_embeds=input_embeds,
-                                                         attention_mask=attention_mask,
-                                                         temperature=temperature, max_new_tokens=max_new_tokens,
-                                                         do_sample=True,
-                                                         suppress_tokens=None)  # Uses the default which is temp=0.6, top_p=0.9
+                        gen_kwargs = {
+                            "input_ids": input_ids,
+                            "inputs_embeds": input_embeds,
+                            "attention_mask": attention_mask,
+                            "temperature": temperature,
+                            "max_new_tokens": max_new_tokens,
+                            "do_sample": True,
+                            "suppress_tokens": None,
+                        }
+                        if top_k is not None:
+                            gen_kwargs["top_k"] = top_k
+                        if top_p is not None:
+                            gen_kwargs["top_p"] = top_p
+                        generate_ids = self.llm.generate(**gen_kwargs)  # Uses the default which is temp=0.6, top_p=0.9
 
                         # Trim off the prompt
                         generate_ids = generate_ids[:, input_ids.shape[1]:]
@@ -705,8 +723,12 @@ class LLM:
                         params = {
                             'num_beams': 3,
                             'repetition_penalty': 1.2,
-                            "max_new_tokens": max_new_tokens
+                            "max_new_tokens": max_new_tokens,
                         }
+                        if top_p is not None:
+                            params['top_p'] = top_p
+                        if top_k is not None:
+                            params['top_k'] = top_k
                     else:
                         if temperature == 0:
                             temperature = 0.7
@@ -719,12 +741,18 @@ class LLM:
                         else:
                             self.logger.debug(f'LLM max_new_tokens is {max_new_tokens}')
                         params = {
-                            'top_p': 0.8,
-                            'top_k': 100,
                             'temperature': temperature,
                             'repetition_penalty': 1.05,
-                            "max_new_tokens": max_new_tokens
+                            "max_new_tokens": max_new_tokens,
                         }
+                        if top_p is not None:
+                            params['top_p'] = top_p
+                        else:
+                            params['top_p'] = 0.8
+                        if top_k is not None:
+                            params['top_k'] = top_k
+                        else:
+                            params['top_k'] = 100
                     params["max_inp_length"] = 4352
                     content = self.llm.chat(image=image, msgs=messages, tokenizer=self.llm_tokenizer,
                                             system_prompt=system_prompt if system_prompt else None,
@@ -800,9 +828,14 @@ class LLM:
                             self.logger.debug(f'LLM max_new_tokens is {max_new_tokens}')
                         params = {
                             'do_sample': True,
-                            'top_k': 10,
                             'temperature': temperature,
                         }
+                        if top_k is not None:
+                            params['top_k'] = top_k
+                        else:
+                            params['top_k'] = 10
+                        if top_p is not None:
+                            params['top_p'] = top_p
 
                     output = self.llm.generate(**inputs, max_new_tokens=max_new_tokens, **params)
                     content = self.llm_processor.decode(output[0][inputs["input_ids"].shape[-1]:],
@@ -868,7 +901,9 @@ class LLM:
                     system_prompt=system_prompt,
                     user_prompt=user_prompt,
                     temperature=self.args.llm_temperature,
-                    max_new_tokens=self.args.llm_max_tokens
+                    max_new_tokens=self.args.llm_max_tokens,
+                    top_k=self.args.llm_top_k,
+                    top_p=self.args.llm_top_p,
                 )
                 if not (self.args.not_overwrite and os.path.isfile(llm_caption_file)):
                     with open(llm_caption_file, "wt", encoding="utf-8") as f:
@@ -988,7 +1023,6 @@ class Tagger:
             raise FileNotFoundError
         # Import ONNX
         try:
-            import onnx
             import onnxruntime as ort
         except ImportError as ie:
             self.logger.error(f'Import ONNX Failed!\nDetails: {ie}')
@@ -1043,7 +1077,7 @@ class Tagger:
         self.logger.debug(f'Loading tags from {tags_csv_path}')
         with open(tags_csv_path, 'r', encoding='utf-8') as csv_file:
             csv_content = csv.reader(csv_file)
-            rows = [row for row in csv_content]
+            rows = list(csv_content)
             header = rows[0]
             rows = rows[1:]
 
@@ -1120,7 +1154,7 @@ class Tagger:
         caption_separator = self.args.wd_caption_separator
         stripped_caption_separator = caption_separator.strip()
         undesired_tags = self.args.wd_undesired_tags.split(stripped_caption_separator)
-        undesired_tags = set([tag.strip() for tag in undesired_tags if tag.strip() != ""])
+        undesired_tags = {tag.strip() for tag in undesired_tags if tag.strip() != ""}
 
         always_first_tags = [tag for tag in self.args.wd_always_first_tags.split(stripped_caption_separator)
                              if tag.strip() != ""] if self.args.wd_always_first_tags else None

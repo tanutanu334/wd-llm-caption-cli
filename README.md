@@ -551,6 +551,14 @@ temperature for LLM model, default is `0`，means use llm own default value.
 
 max tokens for LLM model output, default is `0`, means use llm own default value.
 
+`--llm_top_k`
+
+top-k sampling for LLM model, default use model's value.
+
+`--llm_top_p`
+
+top-p sampling for LLM model, default use model's value.
+
 </details>
 
 ## Credits

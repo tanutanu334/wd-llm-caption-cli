@@ -328,7 +328,9 @@ class Caption:
                                 system_prompt=str(args.llm_system_prompt),
                                 user_prompt=str(args.llm_user_prompt).format(wd_tags=tag_text),
                                 temperature=args.llm_temperature,
-                                max_new_tokens=args.llm_max_tokens
+                                max_new_tokens=args.llm_max_tokens,
+                                top_k=args.llm_top_k,
+                                top_p=args.llm_top_p,
                             )
                             if not (args.not_overwrite and os.path.isfile(llm_caption_file)):
                                 # Write LLM Caption
@@ -751,6 +753,16 @@ def setup_args() -> argparse.Namespace:
         type=int,
         default=0,
         help='max tokens for LLM model output, default is `0`, means use llm own default value.'
+    )
+    llm_args.add_argument(
+        '--llm_top_k',
+        type=int,
+        help='top-k sampling for LLM model, default use model setting.'
+    )
+    llm_args.add_argument(
+        '--llm_top_p',
+        type=float,
+        help='top-p sampling for LLM model, default use model setting.'
     )
 
     gradio_args = args.add_argument_group("Gradio dummy args, no effects")
