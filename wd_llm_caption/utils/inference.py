@@ -9,8 +9,9 @@ import numpy
 from PIL import Image
 from tqdm import tqdm
 
-from .image import image_process, image_process_gbr, image_process_image, get_image_paths
+from .image import get_image_paths, image_process, image_process_gbr, image_process_image
 from .logger import Logger
+
 
 kaomojis = [
     "0_0",
@@ -147,7 +148,7 @@ class LLM:
         try:
             import torch
             if not self.args.llm_use_cpu:
-                self.logger.debug(f'Will empty cuda device cache...')
+                self.logger.debug('Will empty cuda device cache...')
                 torch.cuda.empty_cache()
             if self.models_type == "joy":
                 from torch import nn
@@ -158,8 +159,13 @@ class LLM:
         try:
             from transformers import AutoProcessor, AutoTokenizer, BitsAndBytesConfig
             if self.models_type in ["joy", "florence"]:
-                from transformers import (AutoModel, AutoModelForCausalLM, LlavaForConditionalGeneration,
-                                          PreTrainedTokenizer, PreTrainedTokenizerFast)
+                from transformers import (
+                    AutoModel,
+                    AutoModelForCausalLM,
+                    LlavaForConditionalGeneration,
+                    PreTrainedTokenizer,
+                    PreTrainedTokenizerFast,
+                )
             elif self.models_type == "llama":
                 from transformers import MllamaForConditionalGeneration
                 # from peft import PeftConfig, PeftModel
@@ -181,7 +187,7 @@ class LLM:
             self.clip_model = self.clip_model.vision_model
 
             if self.args.llm_model_name != "Joy-Caption-Pre-Alpha":
-                self.logger.info(f"Loading custom LLM vision model...")
+                self.logger.info("Loading custom LLM vision model...")
                 checkpoint = torch.load(os.path.join(self.image_adapter_path, "clip_model.pt"), map_location='cpu')
                 checkpoint = {k.replace("_orig_mod.module.", ""): v for k, v in checkpoint.items()}
                 self.clip_model.load_state_dict(checkpoint)
@@ -224,11 +230,11 @@ class LLM:
                                                 if self.models_type == "minicpm" else None,
                                             bnb_4bit_compute_dtype=llm_dtype,
                                             bnb_4bit_use_double_quant=True)
-            self.logger.info(f'LLM 4bit quantization: Enabled')
+            self.logger.info('LLM 4bit quantization: Enabled')
         elif self.args.llm_qnt == "8bit":
             qnt_config = BitsAndBytesConfig(load_in_8bit=True,
                                             llm_int8_enable_fp32_cpu_offload=True)
-            self.logger.info(f'LLM 8bit quantization: Enabled')
+            self.logger.info('LLM 8bit quantization: Enabled')
         else:
             qnt_config = None
 
@@ -468,7 +474,7 @@ class LLM:
             device = "cpu" if self.args.llm_use_cpu else "cuda"
             # Cleaning VRAM cache
             if not self.args.llm_use_cpu:
-                self.logger.debug(f'Will empty cuda device cache...')
+                self.logger.debug('Will empty cuda device cache...')
                 torch.cuda.empty_cache()
 
             if self.models_type == "joy":
@@ -758,8 +764,8 @@ class LLM:
                                             system_prompt=system_prompt if system_prompt else None,
                                             sampling=False, stream=False, **params)
                 elif self.models_type == "florence":
-                    self.logger.warning(f"Florence models don't support system prompt or user prompt!")
-                    self.logger.warning(f"Florence models don't support temperature or max tokens!")
+                    self.logger.warning("Florence models don't support system prompt or user prompt!")
+                    self.logger.warning("Florence models don't support temperature or max tokens!")
 
                     def run_inference(task_prompt, text_input=None):
                         if text_input is None:
@@ -959,14 +965,14 @@ class LLM:
         # Unload Image Adapter
         if self.models_type == "joy":
             if hasattr(self, "image_adapter"):
-                self.logger.info(f'Unloading Image Adapter...')
+                self.logger.info('Unloading Image Adapter...')
                 start = time.monotonic()
                 del self.image_adapter
                 self.logger.info(f'Image Adapter unloaded in {time.monotonic() - start:.1f}s.')
                 image_adapter_unloaded = True
         # Unload LLM
         if hasattr(self, "llm"):
-            self.logger.info(f'Unloading LLM...')
+            self.logger.info('Unloading LLM...')
             start = time.monotonic()
             del self.llm
             if hasattr(self, "llm_processor"):
@@ -978,7 +984,7 @@ class LLM:
         # Unload CLIP
         if self.models_type == "joy":
             if hasattr(self, "clip_model"):
-                self.logger.info(f'Unloading CLIP...')
+                self.logger.info('Unloading CLIP...')
                 start = time.monotonic()
                 del self.clip_model
                 del self.clip_processor
@@ -987,7 +993,7 @@ class LLM:
         try:
             import torch
             if not self.args.llm_use_cpu:
-                self.logger.debug(f'Will empty cuda device cache...')
+                self.logger.debug('Will empty cuda device cache...')
                 torch.cuda.empty_cache()
         except ImportError as ie:
             self.logger.error(f'Import torch Failed!\nDetails: {ie}')
