@@ -163,10 +163,21 @@ def gui():
                         with gr.Accordion(label="Joy Formated Prompts", open=False) as joy_formated_prompts:
                             caption_type = gr.Dropdown(
                                 label="Caption Type",
-                                choices=["Descriptive", "Descriptive (Informal)", "Training Prompt", "MidJourney",
-                                         "Booru tag list", "Booru-like tag list", "Art Critic", "Product Listing",
-                                         "Social Media Post"],
-                                value="Descriptive")
+                                choices=[
+                                    "Descriptive",
+                                    "Straightforward",
+                                    "Stable Diffusion Prompt",
+                                    "MidJourney",
+                                    "Danbooru tag list",
+                                    "e621 tag list",
+                                    "Rule34 tag list",
+                                    "Booru-Like Tag List",
+                                    "Art Critic Analysis",
+                                    "Product Listing",
+                                    "Social Media Post",
+                                ],
+                                value="Descriptive",
+                            )
 
                             caption_length = gr.Dropdown(
                                 label="Caption Length",
@@ -194,7 +205,17 @@ def gui():
                                         "Do NOT use any ambiguous language.",
                                         "Include whether the image is sfw, suggestive, or nsfw.",
                                         "ONLY describe the most important elements of the image.",
-                                        "If there is a person/character in the image you must refer to them as {name}."
+                                        "If it is a work of art, do not include the artist's name or the title of the work.",
+                                        "Identify the image orientation (portrait, landscape, or square) and aspect ratio if obvious.",
+                                        "Use vulgar slang and profanity, such as (but not limited to) 'fucking,' 'slut,' 'cock,' etc.",
+                                        "Do NOT use polite euphemisms—lean into blunt, casual phrasing.",
+                                        "Include information about the ages of any people/characters when applicable.",
+                                        "Mention whether the image depicts an extreme close-up, close-up, medium close-up, medium shot, cowboy shot, medium wide shot, wide shot, or extreme wide shot.",
+                                        "Do not mention the mood/feeling/etc of the image.",
+                                        "Explicitly specify the vantage height (eye-level, low-angle worm’s-eye, bird’s-eye, drone, rooftop, etc.).",
+                                        "If there is a watermark, you must mention it.",
+                                        "Your response will be used by a text-to-image model, so avoid useless meta phrases like “This image shows…”, 'You are looking at...', etc.",
+                                        "If there is a person/character in the image you must refer to them as {name}.",
                                     ])
 
                                 name_input = gr.Textbox(label="Person/Character Name (if applicable)")
@@ -347,36 +368,46 @@ def gui():
                                   extra_options_value: list[str], name_input_value: str):
             caption_type_map = {
                 "Descriptive": [
-                    "Write a descriptive caption for this image in a formal tone.",
-                    "Write a descriptive caption for this image in a formal tone within {word_count} words.",
-                    "Write a {length} descriptive caption for this image in a formal tone.",
+                    "Write a long detailed description for this image.",
+                    "Write a detailed description for this image in {word_count} words or less.",
+                    "Write a {length} detailed description for this image.",
                 ],
-                "Descriptive (Informal)": [
-                    "Write a descriptive caption for this image in a casual tone.",
-                    "Write a descriptive caption for this image in a casual tone within {word_count} words.",
-                    "Write a {length} descriptive caption for this image in a casual tone.",
+                "Straightforward": [
+                    "Write a straightforward caption for this image. Begin with the main subject and medium. Mention pivotal elements—people, objects, scenery—using confident, definite language. Focus on concrete details like color, shape, texture, and spatial relationships. Show how elements interact. Omit mood and speculative wording. If text is present, quote it exactly. Note any watermarks, signatures, or compression artifacts. Never mention what's absent, resolution, or unobservable details. Vary your sentence structure and keep the description concise, without starting with “This image is…” or similar phrasing.",
+                    "Write a straightforward caption for this image within {word_count} words. Begin with the main subject and medium. Mention pivotal elements—people, objects, scenery—using confident, definite language. Focus on concrete details like color, shape, texture, and spatial relationships. Show how elements interact. Omit mood and speculative wording. If text is present, quote it exactly. Note any watermarks, signatures, or compression artifacts. Never mention what's absent, resolution, or unobservable details. Vary your sentence structure and keep the description concise, without starting with “This image is…” or similar phrasing.",
+                    "Write a {length} straightforward caption for this image. Begin with the main subject and medium. Mention pivotal elements—people, objects, scenery—using confident, definite language. Focus on concrete details like color, shape, texture, and spatial relationships. Show how elements interact. Omit mood and speculative wording. If text is present, quote it exactly. Note any watermarks, signatures, or compression artifacts. Never mention what's absent, resolution, or unobservable details. Vary your sentence structure and keep the description concise, without starting with “This image is…” or similar phrasing.",
                 ],
-                "Training Prompt": [
-                    "Write a stable diffusion prompt for this image.",
-                    "Write a stable diffusion prompt for this image within {word_count} words.",
-                    "Write a {length} stable diffusion prompt for this image.",
+                "Stable Diffusion Prompt": [
+                    "Output a stable diffusion prompt that is indistinguishable from a real stable diffusion prompt.",
+                    "Output a stable diffusion prompt that is indistinguishable from a real stable diffusion prompt. {word_count} words or less.",
+                    "Output a {length} stable diffusion prompt that is indistinguishable from a real stable diffusion prompt.",
                 ],
                 "MidJourney": [
                     "Write a MidJourney prompt for this image.",
                     "Write a MidJourney prompt for this image within {word_count} words.",
                     "Write a {length} MidJourney prompt for this image.",
                 ],
-                "Booru tag list": [
-                    "Write a list of Booru tags for this image.",
-                    "Write a list of Booru tags for this image within {word_count} words.",
-                    "Write a {length} list of Booru tags for this image.",
+                "Danbooru tag list": [
+                    "Generate only comma-separated Danbooru tags (lowercase_underscores). Strict order: `artist:`, `copyright:`, `character:`, `meta:`, then general tags. Include counts (1girl), appearance, clothing, accessories, pose, expression, actions, background. Use precise Danbooru syntax. No extra text.",
+                    "Generate only comma-separated Danbooru tags (lowercase_underscores). Strict order: `artist:`, `copyright:`, `character:`, `meta:`, then general tags. Include counts (1girl), appearance, clothing, accessories, pose, expression, actions, background. Use precise Danbooru syntax. No extra text. {word_count} words or less.",
+                    "Generate only comma-separated Danbooru tags (lowercase_underscores). Strict order: `artist:`, `copyright:`, `character:`, `meta:`, then general tags. Include counts (1girl), appearance, clothing, accessories, pose, expression, actions, background. Use precise Danbooru syntax. No extra text. {length} length.",
                 ],
-                "Booru-like tag list": [
+                "e621 tag list": [
+                    "Write a comma-separated list of e621 tags in alphabetical order for this image. Start with the artist, copyright, character, species, meta, and lore tags (if any), prefixed by 'artist:', 'copyright:', 'character:', 'species:', 'meta:', and 'lore:'. Then all the general tags.",
+                    "Write a comma-separated list of e621 tags in alphabetical order for this image. Start with the artist, copyright, character, species, meta, and lore tags (if any), prefixed by 'artist:', 'copyright:', 'character:', 'species:', 'meta:', and 'lore:'. Then all the general tags. Keep it under {word_count} words.",
+                    "Write a {length} comma-separated list of e621 tags in alphabetical order for this image. Start with the artist, copyright, character, species, meta, and lore tags (if any), prefixed by 'artist:', 'copyright:', 'character:', 'species:', 'meta:', and 'lore:'. Then all the general tags.",
+                ],
+                "Rule34 tag list": [
+                    "Write a comma-separated list of rule34 tags in alphabetical order for this image. Start with the artist, copyright, character, and meta tags (if any), prefixed by 'artist:', 'copyright:', 'character:', and 'meta:'. Then all the general tags.",
+                    "Write a comma-separated list of rule34 tags in alphabetical order for this image. Start with the artist, copyright, character, and meta tags (if any), prefixed by 'artist:', 'copyright:', 'character:', and 'meta:'. Then all the general tags. Keep it under {word_count} words.",
+                    "Write a {length} comma-separated list of rule34 tags in alphabetical order for this image. Start with the artist, copyright, character, and meta tags (if any), prefixed by 'artist:', 'copyright:', 'character:', and 'meta:'. Then all the general tags.",
+                ],
+                "Booru-Like Tag List": [
                     "Write a list of Booru-like tags for this image.",
                     "Write a list of Booru-like tags for this image within {word_count} words.",
                     "Write a {length} list of Booru-like tags for this image.",
                 ],
-                "Art Critic": [
+                "Art Critic Analysis": [
                     "Analyze this image like an art critic would with information about its composition, style, symbolism, the use of color, light, any artistic movement it might belong to, etc.",
                     "Analyze this image like an art critic would with information about its composition, style, symbolism, the use of color, light, any artistic movement it might belong to, etc. Keep it within {word_count} words.",
                     "Analyze this image like an art critic would with information about its composition, style, symbolism, the use of color, light, any artistic movement it might belong to, etc. Keep it {length}.",
